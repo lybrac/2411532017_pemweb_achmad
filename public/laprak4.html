@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Laporan Praktikum Laravel | UI Bootstrap & Templating</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #060606;
+            --bg-secondary: #0d0d0d;
+            --bg-card: #111111;
+            --bg-card-hover: #161616;
+            --border: #222222;
+            --border-accent: #3a3a3a;
+            --gold: #c8a84e;
+            --gold-light: #d4af37;
+            --gold-dark: #a68a2e;
+            --gold-dim: #8b7340;
+            --gold-glow: rgba(200,168,78,0.12);
+            --text-primary: #e8e4dc;
+            --text-secondary: #a09b91;
+            --text-muted: #6b6560;
+            --code-bg: #080808;
+            --code-border: #2a2a2a;
+            --tag-bg: rgba(200,168,78,0.1);
+            --tag-border: rgba(200,168,78,0.3);
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --info: #3498db;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.65;
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-accent); border-radius: 4px; }
+
+        .container-laprak {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem;
+        }
+
+        /* ─── HERO ─── */
+        .hero-section {
+            position: relative;
+            background: linear-gradient(135deg, #0a0a08 0%, #12100e 30%, #0d0b08 60%, #0a0a08 100%);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            padding: 3.5rem 3rem;
+            margin-bottom: 3rem;
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 20% 50%, rgba(200,168,78,0.06) 0%, transparent 60%),
+                        radial-gradient(ellipse at 85% 20%, rgba(200,168,78,0.04) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .hero-section::after {
+            content: 'UI';
+            position: absolute; bottom: -30px; right: -10px;
+            font-family: 'Playfair Display', serif;
+            font-size: 10rem; font-weight: 900;
+            color: rgba(200,168,78,0.025);
+            letter-spacing: 0.08em; pointer-events: none;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--tag-bg); border: 1px solid var(--tag-border);
+            color: var(--gold-light); padding: 0.4rem 1.2rem; border-radius: 2rem;
+            font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em;
+            text-transform: uppercase; margin-bottom: 1.5rem; position: relative; z-index: 1;
+        }
+        .hero-section h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem; font-weight: 700;
+            color: var(--text-primary); letter-spacing: -0.01em;
+            margin-bottom: 1rem; position: relative; z-index: 1; line-height: 1.2;
+        }
+        .hero-section h1 .gold { color: var(--gold-light); }
+        .hero-subtitle {
+            font-size: 1.05rem; color: var(--text-secondary);
+            max-width: 700px; position: relative; z-index: 1;
+        }
+        .hero-meta {
+            display: flex; gap: 1.5rem; margin-top: 1.8rem;
+            font-size: 0.8rem; color: var(--text-muted);
+            position: relative; z-index: 1; flex-wrap: wrap;
+        }
+        .hero-meta span { display: inline-flex; align-items: center; gap: 0.4rem; }
+        .hero-meta i { color: var(--gold-dim); }
+        .hero-divider {
+            width: 60px; height: 2px;
+            background: linear-gradient(90deg, var(--gold-light), transparent);
+            margin: 1.5rem 0; position: relative; z-index: 1;
+        }
+
+        /* ─── SECTION ANCHOR ─── */
+        .section-anchor {
+            display: flex; align-items: center; gap: 1rem;
+            margin-bottom: 2rem; margin-top: 0.5rem;
+        }
+        .section-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem; font-weight: 700;
+            color: rgba(200,168,78,0.12); line-height: 1; min-width: 50px;
+        }
+        .section-title-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem; font-weight: 600;
+            color: var(--text-primary); letter-spacing: -0.005em;
+        }
+        .section-line {
+            flex: 1; height: 1px;
+            background: linear-gradient(90deg, var(--border), transparent);
+            min-width: 40px;
+        }
+
+        /* ─── CARD ─── */
+        .card-black {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1.25rem; margin-bottom: 2rem; overflow: hidden;
+            transition: border-color 0.25s, box-shadow 0.25s;
+            animation: fadeUp 0.5s ease-out;
+        }
+        .card-black:hover {
+            border-color: var(--border-accent);
+            box-shadow: 0 0 40px -15px var(--gold-glow);
+        }
+        .card-header {
+            padding: 1.3rem 2rem; border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary); display: flex; align-items: center; gap: 0.8rem;
+        }
+        .card-header i { color: var(--gold-light); font-size: 1rem; width: 20px; }
+        .card-header h3 {
+            font-size: 1.05rem; font-weight: 600;
+            color: var(--text-primary); letter-spacing: -0.005em;
+        }
+        .card-body { padding: 1.8rem 2rem; }
+        .card-body p { color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.95rem; }
+        .card-body p:last-child { margin-bottom: 0; }
+        .card-body ul { list-style: none; padding-left: 0; }
+        .card-body ul li {
+            padding: 0.45rem 0; color: var(--text-secondary);
+            font-size: 0.9rem; display: flex; align-items: flex-start; gap: 0.6rem;
+        }
+        .card-body ul li i.fa-check-circle { color: var(--success); margin-top: 2px; flex-shrink: 0; }
+        .card-body ul li i.fa-info-circle { color: var(--info); margin-top: 2px; flex-shrink: 0; }
+
+        /* ─── CODE ─── */
+        .code-block {
+            background: var(--code-bg); border: 1px solid var(--code-border);
+            border-radius: 0.75rem; padding: 1.2rem 1.5rem;
+            font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace;
+            font-size: 0.82rem; line-height: 1.6; color: #c9d1d9;
+            overflow-x: auto; margin: 1.2rem 0; position: relative;
+            white-space: pre-wrap; word-break: break-word;
+        }
+        .code-block::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 3px; height: 100%;
+            background: linear-gradient(180deg, var(--gold-light), var(--gold-dark), transparent);
+        }
+        .code-label {
+            font-size: 0.7rem; color: var(--gold-dim); font-family: 'Cascadia Code', monospace;
+            letter-spacing: 0.05em; text-transform: uppercase;
+            margin-top: 1.2rem; margin-bottom: -0.5rem;
+        }
+        .inline-code {
+            background: var(--code-bg); border: 1px solid var(--code-border);
+            color: var(--gold-light); padding: 0.15rem 0.55rem; border-radius: 6px;
+            font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 0.83rem;
+        }
+
+        /* ─── SCREENSHOT GRID ─── */
+        .screenshot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem; margin: 1.5rem 0;
+        }
+        .screenshot-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 1rem; overflow: hidden;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .screenshot-card:hover { border-color: var(--border-accent); transform: translateY(-2px); }
+        .screenshot-img {
+            background: var(--bg-secondary); text-align: center;
+            padding: 1rem; border-bottom: 1px solid var(--border);
+            min-height: 120px; display: flex; align-items: center;
+            justify-content: center; flex-direction: column; position: relative;
+        }
+        .screenshot-img i {
+            font-size: 2rem; color: var(--gold-dim); opacity: 0.4;
+        }
+        .screenshot-img span {
+            font-size: 0.75rem; color: var(--gold-light);
+            background: var(--tag-bg); padding: 0.2rem 0.8rem;
+            border-radius: 1rem; font-weight: 500; margin-top: 0.5rem;
+        }
+        .screenshot-label {
+            padding: 0.85rem 1rem; font-size: 0.8rem; font-weight: 600;
+            color: var(--text-primary); background: var(--bg-card);
+        }
+        .screenshot-label small {
+            display: block; color: var(--text-muted);
+            font-weight: 400; margin-top: 3px; font-size: 0.72rem;
+        }
+
+        /* ─── STEP ─── */
+        .step-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: var(--tag-bg); border: 1px solid var(--tag-border);
+            color: var(--gold-light); width: 30px; height: 30px;
+            border-radius: 50%; font-size: 0.75rem; font-weight: 700;
+            margin-right: 0.6rem; flex-shrink: 0;
+        }
+
+        /* ─── CALLOUT BOXES ─── */
+        .success-box {
+            background: rgba(46,204,113,0.06); border: 1px solid rgba(46,204,113,0.2);
+            border-left: 3px solid var(--success);
+            border-radius: 0 0.75rem 0.75rem 0;
+            padding: 1rem 1.5rem; margin: 1.2rem 0;
+            color: var(--text-primary); font-size: 0.9rem;
+        }
+        .success-box i { color: var(--success); margin-right: 0.5rem; }
+
+        .info-box {
+            background: rgba(200,168,78,0.06); border: 1px solid rgba(200,168,78,0.2);
+            border-left: 3px solid var(--gold-light);
+            border-radius: 0 0.75rem 0.75rem 0;
+            padding: 1rem 1.5rem; margin: 1.2rem 0;
+            color: var(--text-primary); font-size: 0.9rem;
+        }
+        .info-box i { color: var(--gold-light); margin-right: 0.5rem; }
+
+        .warn-box {
+            background: rgba(231,76,60,0.06); border: 1px solid rgba(231,76,60,0.2);
+            border-left: 3px solid var(--danger);
+            border-radius: 0 0.75rem 0.75rem 0;
+            padding: 1rem 1.5rem; margin: 1.2rem 0;
+            color: var(--text-primary); font-size: 0.9rem;
+        }
+        .warn-box i { color: var(--danger); margin-right: 0.5rem; }
+
+        /* ─── TOOLS GRID ─── */
+        .grid-tools {
+            display: flex; flex-wrap: wrap; gap: 0.7rem;
+            margin: 1.2rem 0;
+        }
+        .tool-item {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--tag-bg); border: 1px solid var(--tag-border);
+            color: var(--gold-light); padding: 0.45rem 1rem;
+            border-radius: 2rem; font-size: 0.8rem; font-weight: 500;
+        }
+        .tool-item i { font-size: 0.75rem; }
+
+        /* ─── NOTE ─── */
+        .note-tag {
+            display: inline-block; font-size: 0.73rem;
+            background: rgba(200,168,78,0.08); border: 1px solid rgba(200,168,78,0.2);
+            color: var(--gold-dim); border-radius: 0.5rem;
+            padding: 0.35rem 0.8rem; margin-top: 0.5rem;
+        }
+
+        /* ─── FILE TREE ─── */
+        .file-tree {
+            background: var(--code-bg); border: 1px solid var(--code-border);
+            border-radius: 0.75rem; padding: 1.2rem 1.5rem;
+            font-family: 'Cascadia Code', 'Fira Code', monospace;
+            font-size: 0.82rem; line-height: 1.8; color: #c9d1d9;
+            margin: 1.2rem 0; position: relative;
+        }
+        .file-tree::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 3px; height: 100%;
+            background: linear-gradient(180deg, #3498db, transparent);
+        }
+        .file-tree .dir { color: var(--gold-light); }
+        .file-tree .file { color: #a5d6a7; }
+        .file-tree .file-php { color: #ce9178; }
+        .file-tree .file-blade { color: #569cd6; }
+
+        /* ─── TABLE ─── */
+        .table-wrap {
+            overflow-x: auto; margin: 1.2rem 0; border-radius: 0.75rem;
+            border: 1px solid var(--border);
+        }
+        table {
+            width: 100%; border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        thead tr { background: var(--bg-secondary); }
+        thead th {
+            padding: 0.85rem 1.2rem; text-align: left;
+            color: var(--gold-light); font-weight: 600;
+            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em;
+            border-bottom: 1px solid var(--border);
+        }
+        tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: rgba(255,255,255,0.02); }
+        tbody td { padding: 0.75rem 1.2rem; color: var(--text-secondary); }
+        tbody td:first-child { color: var(--text-primary); font-weight: 500; }
+        .badge {
+            display: inline-block; padding: 0.2rem 0.6rem;
+            border-radius: 1rem; font-size: 0.7rem; font-weight: 600;
+        }
+        .badge-get { background: rgba(46,204,113,0.15); color: #2ecc71; }
+        .badge-post { background: rgba(52,152,219,0.15); color: #3498db; }
+        .badge-put { background: rgba(200,168,78,0.15); color: var(--gold-light); }
+        .badge-del { background: rgba(231,76,60,0.15); color: var(--danger); }
+
+        /* ─── FOOTER ─── */
+        .footer-section {
+            text-align: center; margin-top: 3rem; padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted); font-size: 0.8rem;
+        }
+        .footer-links {
+            display: flex; justify-content: center; gap: 1.2rem;
+            margin-top: 1rem; flex-wrap: wrap;
+        }
+        .footer-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--bg-card); border: 1px solid var(--border);
+            color: var(--gold-light); padding: 0.6rem 1.4rem;
+            border-radius: 2rem; font-size: 0.8rem; font-weight: 500;
+            cursor: pointer; text-decoration: none; transition: all 0.2s;
+        }
+        .footer-btn:hover {
+            border-color: var(--gold-light); background: var(--gold-glow);
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 768px) {
+            .container-laprak { padding: 1.2rem 1rem; }
+            .hero-section { padding: 2rem 1.5rem; border-radius: 1rem; }
+            .hero-section::after { font-size: 5rem; bottom: -15px; right: 10px; }
+            .hero-section h1 { font-size: 1.8rem; }
+            .screenshot-grid { grid-template-columns: 1fr; }
+            .card-body { padding: 1.2rem 1.2rem; }
+            .card-header { padding: 1rem 1.2rem; }
+            .section-number { font-size: 2rem; }
+            .section-title-text { font-size: 1.2rem; }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ─── SUBHEADING ─── */
+        .sub-heading {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem; font-weight: 600;
+            color: var(--text-primary); margin: 1.8rem 0 0.8rem;
+            display: flex; align-items: center; gap: 0.6rem;
+        }
+        .sub-heading::before {
+            content: '';
+            display: inline-block; width: 20px; height: 2px;
+            background: var(--gold-light); flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container-laprak">
+
+    <!-- ═══ HERO ═══ -->
+    <header class="hero-section">
+        <div class="hero-badge"><i class="fab fa-bootstrap"></i> PRAKTIKUM 2 — FRAMEWORK LARAVEL</div>
+        <h1>Laravel UI Bootstrap,<br><span class="gold">Authentication & Templating</span></h1>
+        <div class="hero-divider"></div>
+        <p class="hero-subtitle">Laporan resmi praktikum — Implementasi sistem autentikasi bawaan Laravel menggunakan package laravel/ui, integrasi template SB Admin 2, dan manajemen pengguna dengan operasi CRUD lengkap.</p>
+        <div class="hero-meta">
+            <span><i class="fas fa-calendar-alt"></i> 2026</span>
+            <span><i class="fas fa-code-branch"></i> Laravel 9</span>
+            <span><i class="fab fa-bootstrap"></i> Bootstrap 4 — SB Admin 2</span>
+            <span><i class="fas fa-shield-alt"></i> Auth Scaffolding</span>
+        </div>
+    </header>
+
+    <!-- ═══ PENDAHULUAN ═══ -->
+    <section>
+        <div class="section-anchor">
+            <span class="section-number">00</span>
+            <h2 class="section-title-text">Pendahuluan & Tujuan</h2>
+            <span class="section-line"></span>
+        </div>
+
+        <div class="card-black">
+            <div class="card-header"><i class="fas fa-feather-alt"></i><h3>Pendahuluan</h3></div>
+            <div class="card-body">
+                <p>Melanjutkan praktikum sebelumnya, praktikum ini membahas integrasi fitur autentikasi ke dalam proyek Laravel menggunakan package <span class="inline-code">laravel/ui</span>. Package ini secara otomatis men-generate controller, model, view, dan route yang diperlukan untuk proses login, registrasi, dan pengelolaan sesi pengguna.</p>
+                <p>Selain autentikasi, praktikum ini juga mencakup penerapan template admin berbasis Bootstrap yaitu <strong>SB Admin 2</strong> dari StartBootstrap, serta implementasi fitur manajemen pengguna dengan pola <span class="inline-code">Resource Controller</span> yang menyediakan operasi CRUD (Create, Read, Update, Delete) secara terstruktur.</p>
+            </div>
+        </div>
+
+        <div class="card-black">
+            <div class="card-header"><i class="fas fa-bullseye"></i><h3>Tujuan Praktikum</h3></div>
+            <div class="card-body">
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Menginstalasi dan mengkonfigurasi package <span class="inline-code">laravel/ui</span> untuk autentikasi bawaan Laravel.</li>
+                    <li><i class="fas fa-check-circle"></i> Mengunduh dan mengintegrasikan template Bootstrap SB Admin 2 ke dalam proyek Laravel.</li>
+                    <li><i class="fas fa-check-circle"></i> Memahami konsep layouting dengan Blade Template Engine menggunakan <span class="inline-code">@extends</span>, <span class="inline-code">@yield</span>, dan <span class="inline-code">@include</span>.</li>
+                    <li><i class="fas fa-check-circle"></i> Mengimplementasikan Resource Controller untuk manajemen pengguna (CRUD).</li>
+                    <li><i class="fas fa-check-circle"></i> Melakukan kustomisasi tabel users dan seeding data menggunakan Artisan.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ LINGKUNGAN ═══ -->
+    <section>
+        <div class="section-anchor">
+            <span class="section-number">01</span>
+            <h2 class="section-title-text">Lingkungan Pengembangan</h2>
+            <span class="section-line"></span>
+        </div>
+        <div class="card-black">
+            <div class="card-header"><i class="fas fa-laptop-code"></i><h3>Tools & Teknologi</h3></div>
+            <div class="card-body">
+                <div class="grid-tools">
+                    <div class="tool-item"><i class="fas fa-server"></i> XAMPP (Apache & MySQL)</div>
+                    <div class="tool-item"><i class="fab fa-php"></i> PHP 8.x</div>
+                    <div class="tool-item"><i class="fas fa-boxes"></i> Composer 2.x</div>
+                    <div class="tool-item"><i class="fab fa-bootstrap"></i> Bootstrap 4 (SB Admin 2)</div>
+                    <div class="tool-item"><i class="fas fa-code"></i> VS Code</div>
+                    <div class="tool-item"><i class="fas fa-database"></i> MySQL / phpMyAdmin</div>
+                    <div class="tool-item"><i class="fab fa-node-js"></i> Node.js & npm</div>
+                </div>
+                <div class="info-box" style="margin-top:1rem;">
+                    <i class="fas fa-download"></i> Template SB Admin 2 diunduh dari <strong>startbootstrap.com/theme/sb-admin-2</strong> kemudian di-extract dan disalin ke folder <span class="inline-code">public/sbadmin/</span> pada proyek Laravel.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ METODOLOGI ═══ -->
+    <section>
+        <div class="section-anchor">
+            <span class="section-number">02</span>
+            <h2 class="section-title-text">Metodologi & Implementasi</h2>
+            <span class="section-line"></span>
+        </div>
+
+        <!-- Step 1: Konfigurasi Database -->
+        <div class="card-black">
+            <div class="card-header"><span class="step-badge">1</span><h3>Konfigurasi Database</h3></div>
+            <div class="card-body">
+                <p>Sebelum menjalankan autentikasi, database harus dikonfigurasi terlebih dahulu melalui file <span class="inline-code">.env</span> di root proyek Laravel. Buka file tersebut dan sesuaikan nilai berikut:</p>
+                <div class="code-label">// .env</div>
+                <div class="code-block">DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel_sisfo
+DB_USERNAME=root
+DB_PASSWORD=</div>
+                <div class="note-tag"><i class="fas fa-info-circle"></i> Pastikan database <strong>laravel_sisfo</strong> telah dibuat di phpMyAdmin sebelum menjalankan migrasi, atau biarkan Laravel membuatnya secara otomatis saat migrasi pertama dijalankan.</div>
+            </div>
+        </div>
+
+        <!-- Step 2: Install Laravel UI -->
+        <div class="card-black">
+            <div class="card-header"><span class="step-badge">2</span><h3>Instalasi Package Laravel/UI & Autentikasi</h3></div>
+            <div class="card-body">
+                <p>Package <span class="inline-code">laravel/ui</span> menyediakan scaffolding antarmuka pengguna untuk autentikasi. Instal melalui Composer, lalu jalankan perintah artisan untuk men-generate scaffold autentikasi berbasis Bootstrap:</p>
+
+                <div class="code-label">// Terminal — Install package</div>
+                <div class="code-block">composer require laravel/ui</div>
+
+                <div class="code-label">// Terminal — Generate auth scaffolding dengan Bootstrap</div>
+                <div class="code-block">php artisan ui bootstrap --auth</div>
+
+                <div class="success-box">
+                    <i class="fas fa-terminal"></i> <strong>Output yang diharapkan:</strong><br>
+                    <span style="color: var(--text-secondary); font-family: monospace; font-size:0.85rem;">
+                    INFO  Authentication scaffolding generated successfully.<br>
+                    INFO  Bootstrap scaffolding installed successfully.<br>
+                    WARN  Please run [npm install &amp;&amp; npm run dev] to compile your fresh scaffolding.
+                    </span>
+                </div>
+
+                <p>Selanjutnya compile aset front-end menggunakan npm:</p>
+                <div class="code-block">npm install && npm run dev</div>
+
+                <p>Setelah scaffolding berhasil, Laravel secara otomatis men-generate file-file berikut:</p>
+
+                <h4 class="sub-heading">Controllers yang di-generate</h4>
+                <div class="file-tree">
+<span class="dir">app/Http/Controllers/Auth/</span>
+├── <span class="file-php">ConfirmPasswordController.php</span>
+├── <span class="file-php">ForgotPasswordController.php</span>
+├── <span class="file-php">LoginController.php</span>
+├── <span class="file-php">RegisterController.php</span>
+├── <span class="file-php">ResetPasswordController.php</span>
+└── <span class="file-php">VerificationController.php</span>
+<span class="dir">app/Http/Controllers/</span>
+├── <span class="file-php">Controller.php</span>
+└── <span class="file-php">HomeController.php</span></div>
+
+                <h4 class="sub-heading">Views yang di-generate</h4>
+                <div class="file-tree">
+<span class="dir">resources/views/</span>
+├── <span class="dir">auth/</span>
+│   ├── <span class="dir">passwords/</span>
+│   │   ├── <span class="file-blade">confirm.blade.php</span>
+│   │   ├── <span class="file-blade">email.blade.php</span>
+│   │   └── <span class="file-blade">reset.blade.php</span>
+│   ├── <span class="file-blade">login.blade.php</span>
+│   ├── <span class="file-blade">register.blade.php</span>
+│   └── <span class="file-blade">verify.blade.php</span>
+└── <span class="dir">layouts/</span>
+    ├── <span class="file-blade">app.blade.php</span>
+    └── <span class="file-blade">home.blade.php</span></div>
+            </div>
+        </div>
+
+        <!-- Step 3: Migration -->
+        <div class="card-black">
+            <div class="card-header"><span class="step-badge">3</span><h3>Migrasi Database & Kustomisasi Tabel Users</h3></div>
+            <div class="card-body">
+                <p>Jalankan migrasi untuk membuat tabel-tabel autentikasi secara otomatis. Jika database belum ada, Laravel akan memberikan konfirmasi pembuatannya:</p>
+                <div class="code-block">php artisan migrate</div>
+
+                <div class="success-box">
+                    <i class="fas fa-check-circle"></i> <strong>Tabel yang dibuat:</strong> users, password_resets, failed_jobs, personal_access_tokens.
+                </div>
+
+                <h4 class="sub-heading">Struktur Awal Tabel Users</h4>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>#</th><th>Name</th><th>Type</th></tr></thead>
+                        <tbody>
+                            <tr><td>1</td><td>id</td><td><span class="inline-code">bigint(20)</span></td></tr>
+                            <tr><td>2</td><td>name</td><td><span class="inline-code">varchar(255)</span></td></tr>
+                            <tr><td>3</td><td>email</td><td><span class="inline-code">varchar(255)</span></td></tr>
+                            <tr><td>4</td><td>email_verified_at</td><td><span class="inline-code">timestamp</span></td></tr>
+                            <tr><td>5</td><td>password</td><td><span class="inline-code">varchar(255)</span></td></tr>
+                            <tr><td>6</td><td>remember_token</td><td><span class="inline-code">varchar(100)</span></td></tr>
+                            <tr><td>7</td><td>created_at</td><td><span class="inline-code">timestamp</span></td></tr>
+                            <tr><td>8</td><td>updated_at</td><td><span class="inline-code">timestamp</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>Untuk kebutuhan aplikasi, perlu ditambahkan field <strong>username</strong>, <strong>level</strong>, dan <strong>status</strong>. Buat migration baru:</p>
+                <div class="code-block">php artisan make:migration costum_table_users</div>
+
+                <p>Buka file migrasi yang baru dibuat di <span class="inline-code">database/migrations/</span> dan isi dengan kode berikut:</p>
+                <div class="code-label">// database/migrations/..._costum_table_users.php</div>
+                <div class="code-block">&lt;?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up()
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table-&gt;string("username")-&gt;unique();
+            $table-&gt;string("level");
+            $table-&gt;enum("status", ["ACTIVE", "INACTIVE"]);
+        });
+    }
+
+    public function down()
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table-&gt;dropColumn("username");
+            $table-&gt;dropColumn("level");
+            $table-&gt;dropColumn("status");
+        });
+    }
+};</div>
+
+                <div class="code-block">php artisan migrate</div>
+
+                <h4 class="sub-heading">Struktur Tabel Users Setelah Kustomisasi</h4>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>#</th><th>Name</th><th>Type</th></tr></thead>
+                        <tbody>
+                            <tr><td>1–8</td><td>... (field bawaan)</td><td>—</td></tr>
+                            <tr><td>9</td><td><strong>username</strong></td><td><span class="inline-code">varchar(255) UNIQUE</span></td></tr>
+                            <tr><td>10</td><td><strong>level</strong></td><td><span class="inline-code">varchar(255)</span></td></tr>
+                            <tr><td>11</td><td><strong>status</strong></td><td><span class="inline-code">enum('ACTIVE','INACTIVE')</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4 class="sub-heading">Seeding User Admin</h4>
+                <p>Buat seeder untuk mengisi data admin awal menggunakan Artisan:</p>
+                <div class="code-block">php artisan make:seeder AdminSeeder</div>
+
+                <p>Buka file <span class="inline-code">database/seeders/AdminSeeder.php</span> dan isi dengan kode berikut:</p>
+                <div class="code-label">// database/seeders/AdminSeeder.php</div>
+                <div class="code-block">&lt;?php
+namespace Database\Seeders;
+use Illuminate\Database\Seeder;
+
+class AdminSeeder extends Seeder
+{
+    public function run()
+    {
+        $admin = new \App\Models\User;
+        $admin-&gt;username  = "admin";
+        $admin-&gt;name      = "Admin Aplikasi";
+        $admin-&gt;email     = "admin@sisfo.com";
+        $admin-&gt;level     = json_encode(["ADMIN"]);
+        $admin-&gt;password  = \Hash::make("12345678");
+        $admin-&gt;save();
+
+        $this-&gt;command-&gt;info("User Admin berhasil ditambahkan");
+    }
+}</div>
+
+                <div class="code-block">php artisan db:seed --class=AdminSeeder</div>
+
+                <div class="success-box">
+                    <i class="fas fa-check-circle"></i> <strong>Output:</strong> <span style="font-family:monospace; color: var(--text-secondary);">INFO  Seeding database. → User Admin berhasil ditambahkan</span>
+                </div>
+
+                <div class="screenshot-grid">
+                    <div class="screenshot-card">
+                        <div class="screenshot-img-wrap">
+                            <img src="laprakn/login.png" alt="Kode navbar Blade" onerror="this.style.display='none'">
+                        </div>
+                        <div class="screenshot-label">
+                            Halaman Login Bawaan Laravel
+                            <small>Akses via http://127.0.0.1:8000/login</small>
+                        </div>
+                    </div>
+
+                    <div class="screenshot-card">
+                        <div class="screenshot-img-wrap">
+                            <img src="laprakn/Screenshot 2026-06-09 153343.png" alt="Kode navbar Blade" onerror="this.style.display='none'">
+                        </div>
+                        <div class="screenshot-label">Halaman Register Bawaan Laravel<small>Akses via http://127.0.0.1:8000/register</small></div>
+                    </div>
+                    <div class="screenshot-card">
+                        <div class="screenshot-img-wrap">
+                            <img src="laprakn/dashboard.png" alt="Kode navbar Blade" onerror="this.style.display='none'">
+                        </div>
+                        <div class="screenshot-label">Halaman Dashboard Setelah Login<small>Menampilkan "selamat datang"</small></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Templating -->
+        <div class="card-black">
+            <div class="card-header"><span class="step-badge">4</span><h3>Templating dengan SB Admin 2</h3></div>
+            <div class="card-body">
+                <p>Unduh template <strong>SB Admin 2</strong> dari <span class="inline-code">startbootstrap.com/theme/sb-admin-2</span>, kemudian extract. Salin seluruh isi folder asset ke dalam <span class="inline-code">public/sbadmin/</span> pada proyek Laravel.</p>
+
+                <div class="info-box">
+                    <i class="fas fa-folder-open"></i> Struktur folder yang diperlukan: <span class="inline-code">public/sbadmin/css/</span>, <span class="inline-code">public/sbadmin/js/</span>, <span class="inline-code">public/sbadmin/vendor/</span>, <span class="inline-code">public/sbadmin/img/</span>
+                </div>
+
+                <h4 class="sub-heading">Halaman Login dengan SB Admin 2</h4>
+                <p>Ganti isi <span class="inline-code">resources/views/layouts/app.blade.php</span> dengan template login SB Admin 2. Perhatikan penggunaan helper <span class="inline-code">asset()</span> untuk memanggil file statis:</p>
+
+                <div class="code-label">// resources/views/layouts/app.blade.php (halaman login)</div>
+                <div class="code-block">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;title&gt;Sisfo - Login&lt;/title&gt;
+    &lt;link href="{{asset('sbadmin/vendor/fontawesome-free/css/all.min.css')}}"
+          rel="stylesheet" type="text/css"&gt;
+    &lt;link href="{{asset('sbadmin/css/sb-admin-2.min.css')}}" rel="stylesheet"&gt;
+&lt;/head&gt;
+&lt;body class="bg-gradient-primary"&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="row justify-content-center"&gt;
+            &lt;div class="col-xl-6 col-lg-6 col-md-9"&gt;
+                &lt;div class="card o-hidden border-0 shadow-lg my-5"&gt;
+                    &lt;div class="card-body p-0"&gt;
+                        &lt;div class="col-lg-12 text-center"&gt;
+                            &lt;div class="p-5"&gt;
+                                &lt;h1 class="h4 text-gray-900 mb-4"&gt;Halaman Login&lt;/h1&gt;
+                                &lt;form class="user" method="POST" action="{{ route('login') }}"&gt;
+                                    @csrf
+                                    &lt;!-- Input email & password --&gt;
+                                    &lt;input type="email" name="email" class="form-control form-control-user" /&gt;
+                                    &lt;input type="password" name="password" class="form-control form-control-user" /&gt;
+                                    &lt;button type="submit" class="btn btn-primary btn-user btn-block"&gt;Login&lt;/button&gt;
+                                &lt;/form&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;script src="{{asset('sbadmin/vendor/jquery/jquery.min.js')}}"&gt;&lt;/script&gt;
+    &lt;script src="{{asset('sbadmin/vendor/jquery-easing/jquery.easing.min.js')}}"&gt;&lt;/script&gt;
+    &lt;script src="{{asset('sbadmin/js/sb-admin-2.min.js')}}"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</div>
+
+                <h4 class="sub-heading">Layout Global — main.blade.php</h4>
+                <p>Buat file baru <span class="inline-code">resources/views/layouts/main.blade.php</span> sebagai layout utama aplikasi. Layout ini menggunakan <span class="inline-code">@include</span> untuk memanggil sidebar dan topbar, serta <span class="inline-code">@yield</span> untuk menyuntikkan konten dari view lain:</p>
+
+                <div class="code-label">// resources/views/layouts/main.blade.php</div>
+                <div class="code-block">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;title&gt;Sisfo - @yield('judul')&lt;/title&gt;
+    &lt;link href="{{asset('sbadmin/vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet"&gt;
+    &lt;link href="{{asset('sbadmin/css/sb-admin-2.min.css')}}" rel="stylesheet"&gt;
+    &lt;!-- DataTables CSS --&gt;
+    &lt;link href="{{asset('sbadmin/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet"&gt;
+    &lt;!-- Select2 CSS --&gt;
+    &lt;link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"&gt;
+&lt;/head&gt;
+&lt;body id="page-top"&gt;
+&lt;div id="wrapper"&gt;
+    @include("layouts.sidebar")       {{-- Sidebar kiri --}}
+    &lt;div id="content-wrapper" class="d-flex flex-column"&gt;
+        &lt;div id="content"&gt;
+            @include('layouts.topbar') {{-- Navbar atas --}}
+            &lt;div class="container-fluid"&gt;
+                &lt;h1 class="h3 mb-4 text-gray-800"&gt;@yield("judul")&lt;/h1&gt;
+                @yield("konten")       {{-- Konten halaman --}}
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;footer class="sticky-footer bg-white"&gt;
+            &lt;span&gt;Copyright &amp;copy; Sisfo&lt;/span&gt;
+        &lt;/footer&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- Scripts --&gt;
+&lt;script src="{{asset('sbadmin/vendor/jquery/jquery.min.js')}}"&gt;&lt;/script&gt;
+&lt;script src="{{asset('sbadmin/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"&gt;&lt;/script&gt;
+&lt;script src="{{asset('sbadmin/vendor/datatables/jquery.dataTables.min.js')}}"&gt;&lt;/script&gt;
+&lt;script src="{{asset('sbadmin/vendor/datatables/dataTables.bootstrap4.min.js')}}"&gt;&lt;/script&gt;
+&lt;script src="{{asset('sbadmin/js/sb-admin-2.min.js')}}"&gt;&lt;/script&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</div>
+
+                <h4 class="sub-heading">Sidebar & Topbar</h4>
+                <p>Buat dua file partial di <span class="inline-code">resources/views/layouts/</span>:</p>
+
+                <div class="code-label">// resources/views/layouts/sidebar.blade.php</div>
+                <div class="code-block">&lt;ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar"&gt;
+    &lt;a class="sidebar-brand d-flex align-items-center justify-content-center" href="#"&gt;
+        &lt;div class="sidebar-brand-icon rotate-n-15"&gt;
+            &lt;i class="fas fa-laugh-wink"&gt;&lt;/i&gt;
+        &lt;/div&gt;
+        &lt;div class="sidebar-brand-text mx-3"&gt;Sisfo&lt;/div&gt;
+    &lt;/a&gt;
+    &lt;hr class="sidebar-divider my-0"&gt;
+    &lt;li class="nav-item"&gt;
+        &lt;a class="nav-link" href="#"&gt;
+            &lt;i class="fas fa-fw fa-tachometer-alt"&gt;&lt;/i&gt;
+            &lt;span&gt;Dashboard&lt;/span&gt;
+        &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li class="nav-item"&gt;
+        &lt;a class="nav-link" href="{{ route('users.index') }}"&gt;
+            &lt;i class="fas fa-fw fa-users"&gt;&lt;/i&gt;
+            &lt;span&gt;Users&lt;/span&gt;
+        &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;hr class="sidebar-divider d-none d-md-block"&gt;
+    &lt;div class="text-center d-none d-md-inline"&gt;
+        &lt;button class="rounded-circle border-0" id="sidebarToggle"&gt;&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/ul&gt;</div>
+
+                <div class="code-label">// resources/views/layouts/topbar.blade.php</div>
+                <div class="code-block">&lt;nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"&gt;
+    &lt;ul class="navbar-nav ml-auto"&gt;
+        &lt;li class="nav-item dropdown no-arrow"&gt;
+            @if (\Auth::user())
+            &lt;a class="nav-link dropdown-toggle" href="#" id="userDropdown"
+               role="button" data-toggle="dropdown"&gt;
+                &lt;span class="mr-2 d-none d-lg-inline text-gray-600 small"&gt;
+                    {{ Auth::user()-&gt;name }}
+                &lt;/span&gt;
+                &lt;img class="img-profile rounded-circle"
+                     src="{{ asset('sbadmin/img/undraw_profile.svg') }}"&gt;
+            &lt;/a&gt;
+            @endif
+            &lt;div class="dropdown-menu dropdown-menu-right shadow"&gt;
+                &lt;a class="dropdown-item" href="#" data-toggle="modal"
+                   data-target="#logoutModal"&gt;
+                    &lt;i class="fas fa-sign-out-alt fa-sm fa-fw mr-2"&gt;&lt;/i&gt; Logout
+                &lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/nav&gt;</div>
+
+                <h4 class="sub-heading">Cara Penggunaan Layout</h4>
+                <p>Untuk menggunakan layout <span class="inline-code">main.blade.php</span> pada view lain, gunakan sintaks <span class="inline-code">@extends</span> dan <span class="inline-code">@section</span>:</p>
+
+                <div class="code-label">// resources/views/home.blade.php</div>
+                <div class="code-block">@extends('layouts.main')
+
+@section("judul") Dashboard @endsection
+
+@section('konten')
+    &lt;p&gt;Selamat datang di Dashboard Sisfo.&lt;/p&gt;
+@endsection</div>
+
+                <div class="screenshot-grid">
+                    <div class="screenshot-card">
+                        <div class="screenshot-img">
+                            <img src="laprakn\Screenshot 2026-06-09 155303.png" alt="Kode navbar Blade" onerror="this.style.display='none'">
+                        </div>
+                        <div class="screenshot-label">Halaman Login dengan SB Admin 2<small>Background biru gradient khas SB Admin 2</small></div>
+                    </div>
+                    <div class="screenshot-card">
+                        <div class="screenshot-img">
+                            <img src="laprakn\Screenshot 2026-06-09 155350.png" alt="Tampilan Dashboard" onerror="this.style.display='none'">
+                        </div>
+                        <div class="screenshot-label">Tampilan Dashboard dengan Layout<small>Sidebar, Topbar, dan area konten terpadu</small></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 5: Manajemen Users CRUD -->
+        <div class="card-black">
+            <div class="card-header"><span class="step-badge">5</span><h3>Manajemen Users — Resource Controller (CRUD)</h3></div>
+            <div class="card-body">
+                <p>Buat Resource Controller untuk manajemen pengguna. Resource Controller menyediakan 7 method secara otomatis (index, create, store, show, edit, update, destroy):</p>
+
+                <div class="code-block">php artisan make:controller UserController --resource</div>
+
+                <p>Tambahkan route resource di <span class="inline-code">routes/web.php</span>:</p>
+                <div class="code-label">// routes/web.php</div>
+                <div class="code-block">use App\Http\Controllers\UserController;
+
+Route::resource('users', UserController::class);</div>
+
+                <h4 class="sub-heading">Pemetaan Route Resource</h4>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Method</th><th>URI</th><th>Action</th><th>Route Name</th></tr></thead>
+                        <tbody>
+                            <tr><td><span class="badge badge-get">GET</span></td><td><span class="inline-code">/users</span></td><td>index</td><td>users.index</td></tr>
+                            <tr><td><span class="badge badge-post">POST</span></td><td><span class="inline-code">/users</span></td><td>store</td><td>users.store</td></tr>
+                            <tr><td><span class="badge badge-get">GET</span></td><td><span class="inline-code">/users/create</span></td><td>create</td><td>users.create</td></tr>
+                            <tr><td><span class="badge badge-get">GET</span></td><td><span class="inline-code">/users/{user}</span></td><td>show</td><td>users.show</td></tr>
+                            <tr><td><span class="badge badge-put">PUT/PATCH</span></td><td><span class="inline-code">/users/{user}</span></td><td>update</td><td>users.update</td></tr>
+                            <tr><td><span class="badge badge-del">DELETE</span></td><td><span class="inline-code">/users/{user}</span></td><td>destroy</td><td>users.destroy</td></tr>
+                            <tr><td><span class="badge badge-get">GET</span></td><td><span class="inline-code">/users/{user}/edit</span></td><td>edit</td><td>users.edit</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4 class="sub-heading">CREATE — Tambah User Baru</h4>
+                <div class="code-label">// app/Http/Controllers/UserController.php — method create & store</div>
+                <div class="code-block">public function create()
+{
+    return view('user.create');
+}
+
+public function store(Request $request)
+{
+    $user           = new \App\Models\User;
+    $user-&gt;name     = $request-&gt;get('nama');
+    $user-&gt;username = $request-&gt;get('username');
+    $user-&gt;email    = $request-&gt;get('email');
+    $user-&gt;password = \Hash::make($request-&gt;get('password'));
+    $user-&gt;level    = json_encode($request-&gt;get('level'));
+    $user-&gt;save();
+
+    return redirect()-&gt;route('users.index')-&gt;with('status', 'User baru berhasil ditambahkan');
+}</div>
+
+                <p>View form tambah user di <span class="inline-code">resources/views/user/create.blade.php</span> menggunakan layout main dan Select2 untuk pemilihan level:</p>
+                <div class="code-label">// resources/views/user/create.blade.php (ringkasan)</div>
+                <div class="code-block">@extends('layouts.main')
+@section("judul") Create User @endsection
+@section('konten')
+&lt;div class="card shadow mb-4"&gt;
+    &lt;div class="card-body"&gt;
+        &lt;form method="POST" action="{{ route('users.store') }}"&gt;
+            @csrf
+            &lt;!-- Input: Nama, Email, Username, Password --&gt;
+            &lt;input type="text"     name="nama"     class="form-control"&gt;
+            &lt;input type="email"    name="email"    class="form-control"&gt;
+            &lt;input type="text"     name="username" class="form-control"&gt;
+            &lt;input type="password" name="password" class="form-control"&gt;
+            &lt;!-- Select2 untuk Level (multiple) --&gt;
+            &lt;select class="form-control select2-multiple" name="level[]" multiple&gt;
+                &lt;option value="ADMIN"&gt;ADMIN&lt;/option&gt;
+                &lt;option value="GURU"&gt;GURU&lt;/option&gt;
+                &lt;option value="STAFF"&gt;STAFF&lt;/option&gt;
+            &lt;/select&gt;
+            &lt;button type="submit" class="btn btn-primary"&gt;Simpan&lt;/button&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+@endsection</div>
+
+                <h4 class="sub-heading">READ — Daftar Users</h4>
+                <div class="code-label">// UserController.php — method index</div>
+                <div class="code-block">public function index()
+{
+    $users = \App\Models\User::all();
+    return view('user.index', ['users' => $users]);
+}</div>
+
+                <p>View list menggunakan DataTables untuk pencarian dan paginasi otomatis:</p>
+                <div class="code-label">// resources/views/user/index.blade.php (ringkasan)</div>
+                <div class="code-block">@extends('layouts.main')
+@section("judul") Users @endsection
+@section('konten')
+@if(session('status'))
+    &lt;div class="alert alert-success"&gt;{{ session('status') }}&lt;/div&gt;
+@endif
+&lt;p&gt;
+    &lt;a href="{{ route('users.create') }}" class="btn btn-primary btn-sm"&gt;Tambah User&lt;/a&gt;
+&lt;/p&gt;
+&lt;table class="table table-bordered" id="dataTable"&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Username&lt;/th&gt;&lt;th&gt;Email&lt;/th&gt;&lt;th&gt;Action&lt;/th&gt;&lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        @foreach($users as $user)
+        &lt;tr&gt;
+            &lt;td&gt;{{ $user-&gt;name }}&lt;/td&gt;
+            &lt;td&gt;{{ $user-&gt;username }}&lt;/td&gt;
+            &lt;td&gt;{{ $user-&gt;email }}&lt;/td&gt;
+            &lt;td&gt;
+                &lt;a href="{{ route('users.edit', $user-&gt;id) }}" class="btn btn-sm btn-success"&gt;Edit&lt;/a&gt;
+                &lt;!-- Tombol Hapus --&gt;
+            &lt;/td&gt;
+        &lt;/tr&gt;
+        @endforeach
+    &lt;/tbody&gt;
+&lt;/table&gt;
+@endsection</div>
+
+                <h4 class="sub-heading">UPDATE — Edit User</h4>
+                <div class="code-label">// UserController.php — method edit & update</div>
+                <div class="code-block">public function edit($id)
+{
+    $user = \App\Models\User::findOrFail($id);
+    return view('user.edit', ['user' => $user]);
+}
+
+public function update(Request $request, $id)
+{
+    $user        = \App\Models\User::findOrFail($id);
+    $user-&gt;name  = $request-&gt;get('nama');
+    $user-&gt;level = json_encode($request-&gt;get('level'));
+    $user-&gt;save();
+
+    return redirect()-&gt;route('users.index')-&gt;with('status', 'User berhasil diubah');
+}</div>
+
+                <div class="info-box">
+                    <i class="fas fa-exclamation-circle"></i> Karena HTML form hanya mendukung method GET dan POST, pengiriman data UPDATE menggunakan method spoofing dengan menambahkan <span class="inline-code">&lt;input type="hidden" name="_method" value="PUT"&gt;</span> di dalam form.
+                </div>
+
+                <h4 class="sub-heading">DELETE — Hapus User</h4>
+                <div class="code-label">// UserController.php — method destroy</div>
+                <div class="code-block">public function destroy($id)
+{
+    $user = \App\Models\User::findOrFail($id);
+    $user-&gt;delete();
+
+    return redirect()-&gt;route('users.index')-&gt;with('status', 'User berhasil dihapus');
+}</div>
+
+                <p>Tombol hapus menggunakan konfirmasi JavaScript dan method spoofing DELETE:</p>
+                <div class="code-block">&lt;form onsubmit="return confirm('Hapus data user ?')" class="d-inline"
+      action="{{route('users.destroy', [$user-&gt;id])}}" method="POST"&gt;
+    @csrf
+    &lt;input type="hidden" name="_method" value="DELETE"&gt;
+    &lt;input type="submit" value="Hapus" class="btn btn-danger btn-sm"&gt;
+&lt;/form&gt;</div>
+
+                <div class="success-box">
+                    <i class="fas fa-check-circle"></i> <strong>Hasil pengujian</strong> — Seluruh operasi CRUD berhasil diimplementasikan: penambahan user baru, tampilan daftar dengan DataTables, edit data, dan penghapusan dengan konfirmasi dialog. Flash session <span class="inline-code">status</span> menampilkan notifikasi keberhasilan pada setiap operasi.
+                </div>
+
+                <div class="screenshot-grid">
+                    <div class="screenshot-card">
+                        <div class="screenshot-img-wrap">
+                            <img src="laprakn/Screenshot 2026-06-09 154543.png" alt="Kode navbar Blade" onerror="this.style.display='none'">
+                        </div>
+                        <div class="screenshot-label">Form Tambah User Baru<small>Dengan Select2 untuk pemilihan level</small></div>
+                    </div>
+                    <div class="screenshot-card">
+                        <div class="screenshot-img">
+                            <img src="laprakn/Screenshot 2026-06-09 155537.png" alt="Kode navbar Blade" onerror="this.style.display='none'">
+                        </div>
+                        <div class="screenshot-label">Tabel Daftar User dengan DataTables<small>Fitur search & pagination otomatis</small></div>
+                    </div>
+                    <div class="screenshot-card">
+                        <div class="screenshot-img">
+                            <img src="laprakn/Screenshot 2026-06-09 155552.png" alt="Kode navbar Blade" onerror="this.style.display='none'">
+                        </div>
+                        <div class="screenshot-label">Form Edit User<small>Data existing ter-populate otomatis</small></div>
+                    </div>
+                    <div class="screenshot-card">
+                        <div class="screenshot-img">
+                            <img src="laprakn/Screenshot 2026-06-09 155702.png" alt="Kode navbar Blade" onerror="this.style.display='none'">
+                        </div>
+                        <div class="screenshot-label">Dialog Konfirmasi Penghapusan<small>Pop-up browser confirm sebelum delete</small></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ KESIMPULAN ═══ -->
+    <section>
+        <div class="section-anchor">
+            <span class="section-number">03</span>
+            <h2 class="section-title-text">Kesimpulan</h2>
+            <span class="section-line"></span>
+        </div>
+        <div class="card-black">
+            <div class="card-header"><i class="fas fa-clipboard-check"></i><h3>Ringkasan Praktikum</h3></div>
+            <div class="card-body">
+                <p>Praktikum ini telah berhasil mendemonstrasikan beberapa konsep penting dalam pengembangan aplikasi web menggunakan Laravel:</p>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Package <span class="inline-code">laravel/ui</span> mempercepat pembuatan sistem autentikasi dengan men-generate controller, model, view, dan route secara otomatis, termasuk halaman login, register, dan forgot password.</li>
+                    <li><i class="fas fa-check-circle"></i> Blade Template Engine memungkinkan pemisahan tampilan yang bersih melalui mekanisme <span class="inline-code">@extends</span>, <span class="inline-code">@yield</span>, <span class="inline-code">@section</span>, dan <span class="inline-code">@include</span>, sehingga perubahan layout global cukup dilakukan di satu file.</li>
+                    <li><i class="fas fa-check-circle"></i> Integrasi template SB Admin 2 menunjukkan fleksibilitas Laravel dalam mengadopsi template HTML/CSS pihak ketiga melalui mekanisme <span class="inline-code">asset()</span> helper.</li>
+                    <li><i class="fas fa-check-circle"></i> Resource Controller menyederhanakan implementasi CRUD dengan memetakan 7 route secara konvensional, mencerminkan prinsip RESTful API dalam aplikasi web.</li>
+                    <li><i class="fas fa-check-circle"></i> Fitur Migration dan Seeding pada Laravel memudahkan pengelolaan skema database secara terstruktur dan reproducible.</li>
+                </ul>
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <a href="https://github.com/lybrac/2411532017_pemweb_achmad" class="footer-btn" target="_blank">
+                        <i class="fab fa-github"></i> Repository GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="footer-section">
+        <p><i class="fab fa-bootstrap" style="color:var(--gold-light);"></i> Praktikum 4 — Laravel UI Bootstrap, Authentication & Templating | Framework Pemrograman Web</p>
+        <div class="footer-links">
+            <a href="/" class="footer-btn"><i class="fas fa-home"></i> Beranda</a>
+            <a href="laprak1.html" class="footer-btn"><i class="fas fa-arrow-left"></i> Laprak 1</a>
+            <a href="prak2.html" class="footer-btn">Laprak 2 <i class="fas fa-arrow-left"></i></a>
+            <a href="laprak3.html" class="footer-btn">Laprak 3 <i class="fas fa-arrow-left"></i></a>
+        </div>
+    </footer>
+
+</div>
+</body>
+</html>

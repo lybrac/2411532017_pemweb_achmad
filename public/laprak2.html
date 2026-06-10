@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Laporan Praktikum Laravel | CRUD Mahasiswa - Migration, Seeder, Controller</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #060606;
+            --bg-secondary: #0d0d0d;
+            --bg-card: #111111;
+            --bg-card-hover: #161616;
+            --border: #222222;
+            --border-accent: #3a3a3a;
+            --gold: #c8a84e;
+            --gold-light: #d4af37;
+            --gold-dark: #a68a2e;
+            --gold-dim: #8b7340;
+            --gold-glow: rgba(200,168,78,0.12);
+            --gold-glow-strong: rgba(200,168,78,0.2);
+            --text-primary: #e8e4dc;
+            --text-secondary: #a09b91;
+            --text-muted: #6b6560;
+            --code-bg: #080808;
+            --code-border: #2a2a2a;
+            --tag-bg: rgba(200,168,78,0.1);
+            --tag-border: rgba(200,168,78,0.3);
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --info: #5dade2;
+            --input-bg: #0d0d0d;
+            --input-border: #333;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.65; scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-accent); border-radius: 4px; }
+
+        .container-laprak { max-width: 1400px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+        /* ─── HERO ─── */
+        .hero-section {
+            position: relative;
+            background: linear-gradient(135deg, #0a0a08 0%, #12100e 30%, #0d0b08 60%, #0a0a08 100%);
+            border: 1px solid var(--border); border-radius: 1.5rem;
+            padding: 3.5rem 3rem; margin-bottom: 3rem; overflow: hidden;
+        }
+        .hero-section::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 20% 50%, rgba(200,168,78,0.06) 0%, transparent 60%),
+                        radial-gradient(ellipse at 85% 20%, rgba(200,168,78,0.04) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .hero-section::after {
+            content: 'CRUD'; position: absolute; bottom: -30px; right: -20px;
+            font-family: 'Playfair Display', serif; font-size: 10rem; font-weight: 900;
+            color: rgba(200,168,78,0.025); letter-spacing: 0.08em; pointer-events: none;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--tag-bg); border: 1px solid var(--tag-border);
+            color: var(--gold-light); padding: 0.4rem 1.2rem; border-radius: 2rem;
+            font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em;
+            text-transform: uppercase; margin-bottom: 1.5rem; position: relative; z-index: 1;
+        }
+        .hero-section h1 {
+            font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 700;
+            color: var(--text-primary); letter-spacing: -0.01em; margin-bottom: 1rem;
+            position: relative; z-index: 1; line-height: 1.2;
+        }
+        .hero-section h1 .gold { color: var(--gold-light); }
+        .hero-subtitle {
+            font-size: 1.05rem; color: var(--text-secondary);
+            max-width: 700px; position: relative; z-index: 1;
+        }
+        .hero-meta {
+            display: flex; gap: 1.5rem; margin-top: 1.8rem;
+            font-size: 0.8rem; color: var(--text-muted);
+            position: relative; z-index: 1; flex-wrap: wrap;
+        }
+        .hero-meta span { display: inline-flex; align-items: center; gap: 0.4rem; }
+        .hero-meta i { color: var(--gold-dim); }
+        .hero-divider {
+            width: 60px; height: 2px;
+            background: linear-gradient(90deg, var(--gold-light), transparent);
+            margin: 1.5rem 0; position: relative; z-index: 1;
+        }
+
+        /* ─── SECTION ANCHOR ─── */
+        .section-anchor {
+            display: flex; align-items: center; gap: 1rem;
+            margin-bottom: 2rem; margin-top: 0.5rem;
+        }
+        .section-number {
+            font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 700;
+            color: rgba(200,168,78,0.12); line-height: 1; min-width: 50px;
+        }
+        .section-title-text {
+            font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 600;
+            color: var(--text-primary); letter-spacing: -0.005em;
+        }
+        .section-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); min-width: 40px; }
+
+        /* ─── CARD ─── */
+        .card-black {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 1.25rem; margin-bottom: 2rem; overflow: hidden;
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+        .card-black:hover { border-color: var(--border-accent); box-shadow: 0 0 40px -15px var(--gold-glow); }
+        .card-header {
+            padding: 1.3rem 2rem; border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary); display: flex; align-items: center; gap: 0.8rem;
+        }
+        .card-header i { color: var(--gold-light); font-size: 1rem; width: 20px; text-align: center; }
+        .card-header h2, .card-header h3 {
+            font-size: 1.05rem; font-weight: 600; color: var(--text-primary);
+        }
+        .card-body { padding: 1.8rem 2rem; }
+        .card-body p { color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.95rem; }
+        .card-body ul { list-style: none; padding-left: 0; }
+        .card-body ul li {
+            padding: 0.45rem 0; color: var(--text-secondary);
+            font-size: 0.9rem; display: flex; align-items: flex-start; gap: 0.6rem;
+        }
+        .card-body ul li i.fa-check-circle { color: var(--success); margin-top: 2px; }
+
+        /* ─── CODE ─── */
+        .code-block, pre.code-block {
+            background: var(--code-bg); border: 1px solid var(--code-border);
+            border-radius: 0.75rem; padding: 1.2rem 1.5rem;
+            font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace;
+            font-size: 0.82rem; line-height: 1.6; color: #c9d1d9;
+            overflow-x: auto; margin: 1.2rem 0; position: relative; white-space: pre-wrap;
+        }
+        .code-block::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 3px; height: 100%;
+            background: linear-gradient(180deg, var(--gold-light), var(--gold-dark), transparent);
+        }
+        .inline-code {
+            background: var(--code-bg); border: 1px solid var(--code-border);
+            color: var(--gold-light); padding: 0.15rem 0.55rem; border-radius: 6px;
+            font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 0.83rem;
+        }
+
+        /* ─── SCREENSHOT ─── */
+        .screenshot-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem; margin: 1.5rem 0;
+        }
+        .screenshot-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 1rem; overflow: hidden;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .screenshot-card:hover { border-color: var(--border-accent); transform: translateY(-2px); }
+        .screenshot-img {
+            background: var(--bg-secondary); text-align: center;
+            padding: 1rem; border-bottom: 1px solid var(--border);
+        }
+        .screenshot-img img { max-width: 100%; border-radius: 8px; border: 1px solid var(--border); }
+        .screenshot-label {
+            padding: 0.85rem 1rem; font-size: 0.8rem; font-weight: 600;
+            color: var(--text-primary); background: var(--bg-card);
+        }
+        .screenshot-label small { display: block; color: var(--text-muted); font-weight: 400; margin-top: 3px; font-size: 0.72rem; }
+
+        /* ─── TABLE ─── */
+        .table-wrap { overflow-x: auto; margin: 1.2rem 0; border: 1px solid var(--border); border-radius: 0.75rem; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        thead th {
+            background: var(--bg-secondary); color: var(--gold-light);
+            font-weight: 600; padding: 0.9rem 1rem; text-align: left;
+            border-bottom: 1px solid var(--border); font-size: 0.78rem;
+            text-transform: uppercase; letter-spacing: 0.04em;
+        }
+        tbody td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); color: var(--text-secondary); }
+        tbody tr:hover { background: rgba(200,168,78,0.03); }
+        tbody tr:last-child td { border-bottom: none; }
+
+        /* ─── FORM ─── */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+        .form-group label { font-weight: 600; font-size: 0.8rem; display: block; margin-bottom: 0.3rem; color: var(--text-secondary); }
+        input, select {
+            width: 100%; padding: 0.7rem 1rem; border-radius: 0.7rem;
+            border: 1px solid var(--input-border); font-family: inherit;
+            background: var(--input-bg); color: var(--text-primary); font-size: 0.9rem;
+        }
+        input:focus { outline: none; border-color: var(--gold-light); box-shadow: 0 0 0 2px var(--gold-glow); }
+
+        /* ─── BUTTONS ─── */
+        .btn-crud {
+            padding: 0.3rem 0.9rem; border-radius: 2rem; font-size: 0.72rem;
+            border: none; cursor: pointer; font-weight: 500; transition: all 0.2s;
+        }
+        .btn-edit {
+            background: rgba(200,168,78,0.15); color: var(--gold-light);
+            border: 1px solid rgba(200,168,78,0.3);
+        }
+        .btn-edit:hover { background: rgba(200,168,78,0.25); }
+        .btn-delete {
+            background: rgba(231,76,60,0.12); color: var(--danger);
+            border: 1px solid rgba(231,76,60,0.25);
+        }
+        .btn-delete:hover { background: rgba(231,76,60,0.2); }
+        .btn-primary-solid {
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+            color: #0a0a0a; border: none; border-radius: 2rem;
+            padding: 0.6rem 1.8rem; font-weight: 700; cursor: pointer;
+            font-family: inherit; font-size: 0.85rem; transition: all 0.2s;
+        }
+        .btn-primary-solid:hover { box-shadow: 0 4px 20px var(--gold-glow-strong); transform: translateY(-1px); }
+        .btn-cancel {
+            background: transparent; color: var(--text-muted); border: 1px solid var(--border);
+            padding: 0.35rem 1.2rem; border-radius: 2rem; cursor: pointer; font-family: inherit;
+        }
+        .btn-cancel:hover { border-color: var(--text-secondary); color: var(--text-primary); }
+
+        /* ─── ALERT ─── */
+        .alert-custom {
+            padding: 0.7rem 1rem; border-radius: 0.75rem;
+            margin-bottom: 1rem; display: none; font-size: 0.85rem;
+        }
+
+        /* ─── HIGHLIGHT ─── */
+        .highlight-box {
+            background: var(--gold-glow); border: 1px solid rgba(200,168,78,0.2);
+            border-left: 3px solid var(--gold-light);
+            border-radius: 0 0.75rem 0.75rem 0;
+            padding: 1rem 1.5rem; margin: 1.2rem 0; font-size: 0.9rem;
+        }
+        .highlight-box i { color: var(--gold-light); margin-right: 0.5rem; }
+
+        /* ─── DEMO BOX ─── */
+        .demo-box {
+            background: var(--bg-secondary); border: 1px solid var(--border);
+            border-radius: 1rem; padding: 1.5rem;
+        }
+        .demo-box h3 { color: var(--text-primary); font-size: 1rem; }
+        .note-tag {
+            display: inline-block; font-size: 0.73rem;
+            background: rgba(200,168,78,0.08); border: 1px solid rgba(200,168,78,0.2);
+            color: var(--gold-dim); border-radius: 0.5rem;
+            padding: 0.35rem 0.8rem; margin-top: 0.5rem;
+        }
+
+        /* ─── TAG PILL ─── */
+        .tag-pill {
+            display: inline-block; background: var(--tag-bg);
+            border: 1px solid var(--tag-border); color: var(--gold-light);
+            padding: 0.2rem 0.7rem; border-radius: 1rem;
+            font-size: 0.7rem; font-weight: 600; margin: 0.15rem 0.3rem 0.15rem 0;
+        }
+
+        /* ─── FOOTER ─── */
+        .footer-section {
+            text-align: center; margin-top: 3rem; padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted); font-size: 0.8rem;
+        }
+        .footer-links {
+            display: flex; justify-content: center; gap: 1rem;
+            margin-top: 1rem; flex-wrap: wrap;
+        }
+        .footer-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--bg-card); border: 1px solid var(--border);
+            color: var(--gold-light); padding: 0.6rem 1.4rem;
+            border-radius: 2rem; font-size: 0.8rem; font-weight: 500;
+            cursor: pointer; text-decoration: none; transition: all 0.2s;
+        }
+        .footer-btn:hover { border-color: var(--gold-light); background: var(--gold-glow); }
+
+        @media (max-width: 768px) {
+            .container-laprak { padding: 1.2rem 1rem; }
+            .hero-section { padding: 2rem 1.5rem; border-radius: 1rem; }
+            .hero-section::after { font-size: 5rem; bottom: -15px; right: 10px; }
+            .hero-section h1 { font-size: 1.6rem; }
+            .screenshot-grid { grid-template-columns: 1fr; }
+            .card-body { padding: 1.2rem 1.2rem; }
+            .card-header { padding: 1rem 1.2rem; }
+            .section-number { font-size: 2rem; }
+            .section-title-text { font-size: 1.2rem; }
+            .form-grid { grid-template-columns: 1fr; }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .card-black { animation: fadeUp 0.5s ease-out; }
+    </style>
+</head>
+<body>
+<div class="container-laprak">
+
+    <!-- ═══ HERO ═══ -->
+    <header class="hero-section">
+        <div class="hero-badge"><i class="fas fa-database"></i> PRAKTIKUM 2 — FRAMEWORK LARAVEL</div>
+        <h1>Migration, Seeder, Model, Controller,<br>Routing & View — <span class="gold">CRUD Mahasiswa</span></h1>
+        <div class="hero-divider"></div>
+        <p class="hero-subtitle">Laporan resmi praktikum — Membuat tabel, mengisi data awal, resource controller, blade template, serta operasi CRUD lengkap menggunakan Eloquent ORM.</p>
+        <div class="hero-meta">
+            <span><i class="fas fa-calendar-alt"></i> 2026</span>
+            <span><i class="fas fa-code-branch"></i> Laravel 11</span>
+            <span><i class="fas fa-check-circle"></i> MySQL / Eloquent</span>
+        </div>
+    </header>
+
+    <!-- ═══ PENDAHULUAN ═══ -->
+    <section>
+        <div class="section-anchor">
+            <span class="section-number">00</span>
+            <h2 class="section-title-text">Pendahuluan & Tujuan Praktikum</h2>
+            <span class="section-line"></span>
+        </div>
+        <div class="card-black">
+            <div class="card-header"><i class="fas fa-clipboard-list"></i><h2>Pendahuluan</h2></div>
+            <div class="card-body">
+                <p>Praktikum ini bertujuan untuk mengimplementasikan konsep <strong>Migration, Seeding, Model, Controller, Routing, dan View</strong> pada framework Laravel. Fokus utama adalah membangun sistem <strong>CRUD (Create, Read, Update, Delete)</strong> untuk entitas <strong>Mahasiswa</strong> menggunakan <strong>Eloquent ORM</strong>. Seluruh tahapan didokumentasikan melalui perintah Artisan, struktur kode, serta hasil pengujian di browser.</p>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Membuat migration tabel <strong>students</strong> dan <strong>products</strong> sebagai contoh.</li>
+                    <li><i class="fas fa-check-circle"></i> Mengisi data awal menggunakan Seeder (ProductSeeder, StudentSeeder).</li>
+                    <li><i class="fas fa-check-circle"></i> Membuat Model, Resource Controller, dan routing untuk operasi CRUD mahasiswa.</li>
+                    <li><i class="fas fa-check-circle"></i> Menampilkan data melalui Blade Template dan menguji fungsionalitas tambah, edit, hapus.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ LANGKAH 1: MIGRATION ═══ -->
+    <section>
+        <div class="section-anchor">
+            <span class="section-number">01</span>
+            <h2 class="section-title-text">Migration & Seeding — Persiapan Database</h2>
+            <span class="section-line"></span>
+        </div>
+
+        <div class="card-black">
+            <div class="card-header"><i class="fas fa-table"></i><h3>1. Migration Tabel Products</h3></div>
+            <div class="card-body">
+                <p>Perintah <span class="inline-code">php artisan make:migration create_products_table</span> menghasilkan file migration.</p>
+                <div class="screenshot-grid">
+                    <div class="screenshot-card">
+                        <div class="screenshot-img"><img src="laprak2/image1.png" alt="migration products" onerror="this.src='https://placehold.co/400x150/111/333?text=image1.png'"></div>
+                        <div class="screenshot-label"><strong>image1.png</strong> — Membuat migration <em>create_products_table</em><small>Perintah artisan membuat file di database/migrations</small></div>
+                    </div>
+                </div>
+                <div class="code-block">// File migration products (skema)
+Schema::create('products', function (Blueprint $table) {
+    $table->id();
+    $table->string('name');
+    $table->integer('price');
+    $table->text('description');
+    $table->timestamps();
+});</div>
+            </div>
+        </div>
+
+        <div class="card-black">
+            <div class="card-header"><i class="fas fa-seedling"></i><h3>2. ProductSeeder</h3></div>
+            <div class="card-body">
+                <p>Menjalankan <span class="inline-code">php artisan make:seeder ProductSeeder</span> untuk membuat data awal produk.</p>
+                <div class="screenshot-grid">
+                    <div class="screenshot-card">
+                        <div class="screenshot-img"><img src="laprak2/image3.png" alt="product seeder" onerror="this.src='https://placehold.co/400x150/111/333?text=image3.png'"></div>
+                        <div class="screenshot-label"><strong>image3.png</strong> — Seeder ProductSeeder berhasil dibuat.</div>
+                    </div>
+                </div>
+                <div class="code-block">// ProductSeeder.php - contoh data
+DB::table('products')->insert([
+    ['name'=>'Laptop', 'price'=>7000000, 'description'=>'Laptop programming'],
+    ['name'=>'Mouse', 'price'=>150000, 'description'=>'Mouse wireless'],
+]);</div>
+            </div>
+        </div>
+
+        <div class="card-black">
+            <div class="card-header"><i class="fas fa-database"></i><h3>3. Menjalankan Migrate & Seeder</h3></div>
+            <div class="card-body">
+                <p>Perintah <span class="inline-code">php artisan migrate</span> dan <span class="inline-code">php artisan db:seed</span>.</p>
+                <div class="screenshot-grid">
+                    <div class="screenshot-card">
+                        <div class="screenshot-img"><img src="laprak2/image4.png" alt="migrate seed" onerror="this.src='https://placehold.co/400x200/111/333?text=image4.png'"></div>
+                        <div class="screenshot-label"><strong>image4.png</strong> — Proses migrate & seed berhasil.</div>
+                    </div>
+                </div>
+                <div class="highlight-box"><i class="fas fa-check-circle"></i> Data produk Laptop dan Mouse berhasil diisi ke database.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ LANGKAH 2: MODEL ═══ -->
+    <section>
+        <div class="section-anchor">
+            <span class="section-number">02</span>
+            <h2 class="section-title-text">Model, View & Controller Dasar</h2>
+            <span class="section-line"></span>
+        </div>
+
+        <div class="card-black">
+            <div class="card-header"><i class="fas fa-cube"></i><h3>4. Membuat Model Product</h3></div>
+            <div class="card-body">
+                <p><span class="inline-code">php artisan make:model Product</span> menghasilkan model untuk berinteraksi dengan tabel products.</p>
+                <div class="screenshot-grid">
+                    <div class="screenshot-card">
+                        <div class="screenshot-img"><img src="laprak2/image5.png" alt="model product" onerror="this.src='https://placehold.co/400x150/111/333?text=image5.png'"></div>
+                        <div class="screenshot-label"><strong>image5.png</strong> — Model Product.php sukses dibuat.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-black">
+            <div class="card-header"><i class="fas fa-eye"></i><h3>5. Menampilkan Data Produk (View & Route)</h3></div>
+            <div class="card-body">
+                <p>Dengan route di <span class="inline-code">routes/web.php</span> dan view <span class="inline-code">products.blade.php</span>, data produk berhasil ditampilkan.</p>
+                <div class="screenshot-grid">
+                    <div class="screenshot-card">
+                        <div class="screenshot-img"><img src="laprak2/image7.png" alt="produk view" onerror="this.src='https://placehold.co/400x200/111/333?text=image7.png'"></div>
+                        <div class="screenshot-label"><strong>image7.png</strong> — Halaman daftar produk (Laptop & Mouse).</div>
+                    </div>
+                </div>
+                <div class="code-block">// routes/web.php
+Route::get('/products', [ProductController::class, 'index']);
+// Blade: @foreach ($products as $product) ... @endforeach</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ LANGKAH 3: CRUD MAHASISWA ═══ -->
+    <section>
+        <div class="section-anchor">
+            <span class="section-number">03</span>
+            <h2 class="section-title-text">Implementasi CRUD Mahasiswa</h2>
+            <span class="section-line"></span>
+        </div>
+
+        <div class="card-black">
+            <div class="card-header"><i class="fas fa-user-graduate"></i><h3>6. Migration Tabel Student</h3></div>
+            <div class="card-body">
+                <p><span class="inline-code">php artisan make:migration create_student_table</span>.</p>
+                <div class="screenshot-grid">
+                    <div class="screenshot-card">
+                        <div class="screenshot-img"><img src="laprak2/image8.png" alt="migration student" onerror="this.src='https://placehold.co/400x150/111/333?text=image8.png'"></div>
+                        <div class="screenshot-label"><strong>image8.png</strong> — Migration student berhasil dijalankan.</div>
+                    </div>
+                </div>
+                <div class="code-block">Schema::create('students', function (Blueprint $table) {
+    $table->id();
+    $table->string('nim')->unique();
+    $table->string('name');
+    $table->string('jurusan');
+    $table->string('email')->unique();
+    $table->timestamps();
+});</div>
+            </div>
+        </div>
+
+        <div class="card-black">
+            <div class="card-header"><i class="fas fa-tools"></i><h3>7. Seeder, Controller & Model Student</h3></div>
+            <div class="card-body">
+                <p><span class="inline-code">php artisan make:seeder StudentSeeder</span>, <span class="inline-code">make:controller StudentController</span>, <span class="inline-code">make:model Student</span>.</p>
+                <div class="screenshot-grid">
+                    <div class="screenshot-card">
+                        <div class="screenshot-img"><img src="laprak2/image9.png" alt="seeder controller model" onerror="this.src='https://placehold.co/400x200/111/333?text=image9.png'"></div>
+                        <div class="screenshot-label"><strong>image9.png</strong> — Ketiga komponen sukses digenerate.</div>
+                    </div>
+                </div>
+                <div class="code-block">// StudentSeeder.php
+public function run(): void {
+    Student::create(['nim'=>'230101001','name'=>'Ahmad Fauzi','jurusan'=>'Informatika','email'=>'ahmad@univ.ac.id']);
+    Student::create(['nim'=>'230101002','name'=>'Siti Nurhaliza','jurusan'=>'Sistem Informasi','email'=>'siti@univ.ac.id']);
+}</div>
+            </div>
+        </div>
+
+        <div class="card-black">
+            <div class="card-header"><i class="fas fa-code-branch"></i><h3>8. Routing & Tampilan CRUD</h3></div>
+            <div class="card-body">
+                <p>Route resource: <span class="inline-code">Route::resource('students', StudentController::class);</span></p>
+                <div class="code-block">use App\Http\Controllers\StudentController;
+Route::resource('students', StudentController::class);
+// Akses: /students -> index, /students/create, dll.</div>
+
+                <p style="margin:1rem 0;"><i class="fas fa-desktop"></i> <strong>Demo CRUD Mahasiswa (Simulasi Interaktif)</strong></p>
+
+                <div id="crudAlert" class="alert-custom"></div>
+                <div class="demo-box">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                        <h3><i class="fas fa-user-plus" style="color:var(--gold-light);"></i> <span id="formMode">Tambah Mahasiswa</span></h3>
+                        <button id="cancelEdit" class="btn-cancel" style="display:none;">Batal Edit</button>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group"><label>NIM *</label><input type="text" id="nim" placeholder="NIM unik"></div>
+                        <div class="form-group"><label>Nama Lengkap</label><input type="text" id="name" placeholder="Nama mahasiswa"></div>
+                        <div class="form-group"><label>Jurusan</label><input type="text" id="jurusan" placeholder="Informatika / SI"></div>
+                        <div class="form-group"><label>Email</label><input type="email" id="email" placeholder="email@domain.ac.id"></div>
+                    </div>
+                    <div style="text-align:right;">
+                        <button id="submitStudent" class="btn-primary-solid"><i class="fas fa-save"></i> Simpan Data</button>
+                    </div>
+                </div>
+
+                <div class="table-wrap" style="margin-top:1.5rem;">
+                    <table id="studentTable">
+                        <thead><tr><th>ID</th><th>NIM</th><th>Nama</th><th>Jurusan</th><th>Email</th><th>Aksi</th></tr></thead>
+                        <tbody id="studentTableBody"><tr><td colspan="6" style="text-align:center;">Memuat data mahasiswa...</td></tr></tbody>
+                    </table>
+                </div>
+                <div class="note-tag"><i class="fas fa-info-circle"></i> Demo ini mensimulasikan operasi CRUD sesuai method <strong>index, store, update, destroy</strong> pada resource controller.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ RINGKASAN ═══ -->
+    <section>
+        <div class="section-anchor">
+            <span class="section-number">04</span>
+            <h2 class="section-title-text">Ringkasan & Kesimpulan</h2>
+            <span class="section-line"></span>
+        </div>
+
+        <div class="card-black">
+            <div class="card-header"><i class="fas fa-terminal"></i><h3>Ringkasan Perintah Artisan</h3></div>
+            <div class="card-body">
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Perintah</th><th>Fungsi</th></tr></thead>
+                        <tbody>
+                            <tr><td><span class="inline-code">php artisan make:migration create_students_table</span></td><td>Membuat file migration tabel mahasiswa</td></tr>
+                            <tr><td><span class="inline-code">php artisan migrate</span></td><td>Menjalankan migration ke database</td></tr>
+                            <tr><td><span class="inline-code">php artisan make:seeder StudentSeeder</span></td><td>Membuat seeder untuk data awal</td></tr>
+                            <tr><td><span class="inline-code">php artisan make:model Student -mcs</span></td><td>Model + Migration + Controller + Seeder (shortcut)</td></tr>
+                            <tr><td><span class="inline-code">php artisan make:controller StudentController --resource</span></td><td>Resource controller CRUD standar</td></tr>
+                            <tr><td><span class="inline-code">php artisan route:list</span></td><td>Menampilkan daftar route</td></tr>
+                            <tr><td><span class="inline-code">php artisan migrate:fresh --seed</span></td><td>Reset database & jalankan semua seeder</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="highlight-box">
+                    <i class="fas fa-lightbulb"></i> <strong>Tips:</strong> Gunakan <span class="inline-code">php artisan make:model Student -mcs</span> untuk mempercepat pembuatan komponen. Jangan lupa tambahkan <span class="inline-code">$fillable</span> di Model.
+                </div>
+            </div>
+        </div>
+
+        <div class="card-black">
+            <div class="card-header"><i class="fas fa-check-double"></i><h3>Kesimpulan</h3></div>
+            <div class="card-body">
+                <p>Praktikum ini berhasil mengimplementasikan seluruh komponen Laravel: <strong>Migration</strong> (membuat tabel products & students), <strong>Seeding</strong> (data awal), <strong>Model</strong> (Eloquent ORM), <strong>Resource Controller</strong>, <strong>Routing</strong>, serta <strong>View Blade</strong>. Operasi CRUD untuk data mahasiswa berjalan dengan baik, sesuai dengan konsep RESTful. Dengan pemahaman ini, pengembangan aplikasi web berbasis Laravel menjadi lebih terstruktur dan efisien.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="footer-section">
+        <p>
+            <i class="fab fa-github" style="color:var(--gold-dim);"></i> <strong>GitHub Repository</strong> :
+            <a href="#" id="githubLink" style="color:var(--gold-light); text-decoration:none;">https://github.com/praktikan/laravel-crud-mahasiswa</a>
+        </p>
+        <p style="margin-top:0.3rem;">
+            <i class="fas fa-file-excel" style="color:var(--gold-dim);"></i> <strong>Spreadsheet</strong> :
+            <a href="#" id="spreadsheetLink" style="color:var(--gold-light); text-decoration:none;">Link Pengumpulan Tugas</a>
+        </p>
+        <div class="footer-links">
+            <a href="/" class="footer-btn"><i class="fas fa-home"></i> Beranda</a>
+            <a href="laprak1.html" class="footer-btn">Laprak 1</a>
+            <a href="laprak3.html" class="footer-btn">Laprak 3 <i class="fas fa-arrow-right"></i></a>
+            <a href="laprak4.html" class="footer-btn">Laprak 4</a>
+        </div>
+        <p style="margin-top:1rem; font-size:0.7rem;">© 2026 — Laporan Praktikum Pemrograman Web (Laravel) — CRUD Mahasiswa</p>
+    </footer>
+</div>
+
+<!-- SIMULASI CRUD MAHASISWA (JavaScript) -->
+<script>
+    let students = [
+        { id: 1, nim: "230101001", name: "Ahmad Fauzi", jurusan: "Informatika", email: "ahmad@univ.ac.id" },
+        { id: 2, nim: "230101002", name: "Siti Nurhaliza", jurusan: "Sistem Informasi", email: "siti@univ.ac.id" }
+    ];
+    let nextId = 3, editId = null, editModeActive = false;
+    const tbody = document.getElementById('studentTableBody');
+    const nimInput = document.getElementById('nim'), nameInput = document.getElementById('name');
+    const jurusanInput = document.getElementById('jurusan'), emailInput = document.getElementById('email');
+    const submitBtn = document.getElementById('submitStudent'), cancelBtn = document.getElementById('cancelEdit');
+    const formModeSpan = document.getElementById('formMode'), alertDiv = document.getElementById('crudAlert');
+
+    function showMessage(msg, isError = false) {
+        alertDiv.style.display = 'block'; alertDiv.textContent = msg;
+        alertDiv.style.background = isError ? 'rgba(231,76,60,0.15)' : 'rgba(46,204,113,0.12)';
+        alertDiv.style.color = isError ? '#e74c3c' : '#2ecc71';
+        alertDiv.style.border = isError ? '1px solid rgba(231,76,60,0.3)' : '1px solid rgba(46,204,113,0.25)';
+        setTimeout(() => { alertDiv.style.display = 'none'; }, 2500);
+    }
+
+    function renderTable() {
+        if (students.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Tidak ada data, silakan tambah mahasiswa</td></tr>';
+            return;
+        }
+        let html = '';
+        students.forEach(s => {
+            html += `<tr>
+                <td>${s.id}</td><td><strong>${escapeHtml(s.nim)}</strong></td>
+                <td>${escapeHtml(s.name)}</td><td>${escapeHtml(s.jurusan)}</td><td>${escapeHtml(s.email)}</td>
+                <td>
+                    <button class="btn-crud btn-edit" data-id="${s.id}" style="margin-right:6px;">Edit</button>
+                    <button class="btn-crud btn-delete" data-id="${s.id}">Hapus</button>
+                </td></tr>`;
+        });
+        tbody.innerHTML = html;
+        document.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.addEventListener('click', () => editStudent(parseInt(btn.getAttribute('data-id'))));
+        });
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', () => deleteStudent(parseInt(btn.getAttribute('data-id'))));
+        });
+    }
+
+    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;' })[m]); }
+
+    function editStudent(id) {
+        const student = students.find(s => s.id === id); if (!student) return;
+        nimInput.value = student.nim; nameInput.value = student.name;
+        jurusanInput.value = student.jurusan; emailInput.value = student.email;
+        editModeActive = true; editId = id;
+        formModeSpan.innerText = 'Edit Mahasiswa';
+        submitBtn.innerHTML = '<i class="fas fa-pen"></i> Update Data';
+        cancelBtn.style.display = 'inline-block';
+    }
+
+    function deleteStudent(id) {
+        if (confirm('Yakin hapus data mahasiswa ini? (method destroy)')) {
+            const index = students.findIndex(s => s.id === id);
+            if (index !== -1) { students.splice(index, 1); renderTable(); showMessage('Mahasiswa berhasil dihapus (destroy)', false); }
+            if (editModeActive && editId === id) resetForm();
+        }
+    }
+
+    function resetForm() {
+        nimInput.value = ''; nameInput.value = ''; jurusanInput.value = ''; emailInput.value = '';
+        editModeActive = false; editId = null;
+        formModeSpan.innerText = 'Tambah Mahasiswa';
+        submitBtn.innerHTML = '<i class="fas fa-save"></i> Simpan Data';
+        cancelBtn.style.display = 'none';
+    }
+
+    function saveOrUpdate() {
+        const nimVal = nimInput.value.trim(), nameVal = nameInput.value.trim();
+        const jurusanVal = jurusanInput.value.trim(), emailVal = emailInput.value.trim();
+        if (!nimVal || !nameVal || !jurusanVal || !emailVal) { showMessage('Semua field harus diisi!', true); return; }
+        if (!emailVal.includes('@')) { showMessage('Email tidak valid', true); return; }
+        if (!editModeActive) {
+            if (students.some(s => s.nim === nimVal)) { showMessage('NIM sudah terdaftar', true); return; }
+            if (students.some(s => s.email === emailVal)) { showMessage('Email sudah dipakai', true); return; }
+            students.push({ id: nextId++, nim: nimVal, name: nameVal, jurusan: jurusanVal, email: emailVal });
+            showMessage('Data tersimpan (method store)', false);
+        } else {
+            const target = students.find(s => s.id === editId);
+            if (target) {
+                if (target.nim !== nimVal && students.some(s => s.nim === nimVal && s.id !== editId)) { showMessage('NIM duplikat', true); return; }
+                if (target.email !== emailVal && students.some(s => s.email === emailVal && s.id !== editId)) { showMessage('Email duplikat', true); return; }
+                target.nim = nimVal; target.name = nameVal; target.jurusan = jurusanVal; target.email = emailVal;
+                showMessage('Data diupdate (method update)', false);
+            }
+        }
+        renderTable(); resetForm();
+    }
+
+    submitBtn.addEventListener('click', saveOrUpdate);
+    cancelBtn.addEventListener('click', resetForm);
+    renderTable();
+
+    document.getElementById('githubLink')?.addEventListener('click', (e) => { e.preventDefault(); alert('Repository GitHub: https://github.com/username/laravel-crud-mahasiswa'); });
+    document.getElementById('spreadsheetLink')?.addEventListener('click', (e) => { e.preventDefault(); alert('Spreadsheet pengumpulan tugas telah disediakan oleh asisten praktikum.'); });
+</script>
+</body>
+</html>

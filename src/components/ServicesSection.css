@@ -1,0 +1,50 @@
+.svc-section { position: relative; padding: 100px 0; overflow: hidden; z-index: 1; }
+.svc-ambient {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 700px; height: 400px;
+  background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 65%);
+  pointer-events: none; z-index: 0;
+}
+.svc-heading-wrap { text-align: center; margin-bottom: 12px; }
+.svc-eyebrow { display: inline-block; color: var(--accent); letter-spacing: 0.35em; font-size: 0.72rem; text-transform: uppercase; opacity: 0.82; margin-bottom: 10px; }
+.svc-title { color: var(--accent); font-weight: 700; font-size: clamp(1.5rem,3vw,2rem); letter-spacing: 0.07em; margin: 0; }
+.svc-title-line { width: 60px; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); margin: 14px auto 0; border-radius: 2px; }
+
+.svc-spotlight-card {
+  position: relative; height: 100%; padding: 36px 28px 32px;
+  border-radius: var(--radius-card);
+  background: var(--bg-card);
+  backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border); overflow: hidden; cursor: default;
+  transition: transform 0.4s cubic-bezier(0.25,0.8,0.25,1), border-color 0.4s ease, box-shadow 0.4s ease;
+  will-change: transform; transform: translateZ(0);
+}
+.svc-spotlight-card:hover {
+  transform: translateY(-10px) translateZ(0);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-card-hover);
+}
+.svc-spotlight { position: absolute; inset: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 0; border-radius: var(--radius-card); }
+.svc-corner { position: absolute; width: 20px; height: 20px; opacity: 0; transition: opacity 0.35s ease; z-index: 1; }
+.svc-spotlight-card:hover .svc-corner { opacity: 1; }
+.svc-corner-tl { top: 12px; left: 12px; border-top: 1.5px solid var(--accent); border-left: 1.5px solid var(--accent); border-radius: 3px 0 0 0; }
+.svc-corner-br { bottom: 12px; right: 12px; border-bottom: 1.5px solid var(--accent); border-right: 1.5px solid var(--accent); border-radius: 0 0 3px 0; }
+.svc-tag {
+  position: relative; z-index: 2; display: inline-block;
+  padding: 3px 12px; border-radius: 50px; font-size: 0.68rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--accent); background: var(--bg-tag); border: 1px solid var(--border); margin-bottom: 20px;
+}
+.svc-icon-ring {
+  position: relative; z-index: 2; width: 72px; height: 72px; border-radius: 50%;
+  background: var(--bg-icon); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 20px;
+  transition: background 0.35s ease, box-shadow 0.35s ease;
+}
+.svc-spotlight-card:hover .svc-icon-ring { background: rgba(197,165,114,0.18); box-shadow: var(--shadow-glow); }
+.svc-icon-inner { width: 52px; height: 52px; border-radius: 50%; background: var(--bg-tag); display: flex; align-items: center; justify-content: center; }
+.svc-icon { font-size: 1.6rem; color: var(--accent); position: relative; z-index: 2; }
+.svc-card-title { position: relative; z-index: 2; color: var(--text-primary); font-weight: 700; font-size: 1.08rem; letter-spacing: 0.03em; margin-bottom: 10px; }
+.svc-card-desc { position: relative; z-index: 2; color: var(--text-secondary); font-size: 0.88rem; line-height: 1.75; margin: 0; }
+.svc-bottom-line { position: absolute; bottom: 0; left: 0; height: 2px; width: 0; background: linear-gradient(90deg, transparent, var(--accent), transparent); transition: width 0.5s cubic-bezier(0.25,0.8,0.25,1); z-index: 3; }
+.svc-spotlight-card:hover .svc-bottom-line { width: 100%; }

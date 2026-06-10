@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Laporan Praktikum Laravel | Routing & MVC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #060606;
+            --bg-secondary: #0d0d0d;
+            --bg-card: #111111;
+            --bg-card-hover: #161616;
+            --border: #222222;
+            --border-accent: #3a3a3a;
+            --gold: #c8a84e;
+            --gold-light: #d4af37;
+            --gold-dark: #a68a2e;
+            --gold-dim: #8b7340;
+            --gold-glow: rgba(200,168,78,0.12);
+            --text-primary: #e8e4dc;
+            --text-secondary: #a09b91;
+            --text-muted: #6b6560;
+            --code-bg: #080808;
+            --code-border: #2a2a2a;
+            --tag-bg: rgba(200,168,78,0.1);
+            --tag-border: rgba(200,168,78,0.3);
+            --success: #2ecc71;
+            --danger: #e74c3c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.65;
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-accent); border-radius: 4px; }
+
+        .container-laprak {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem;
+        }
+
+        /* ─── HERO ─── */
+        .hero-section {
+            position: relative;
+            background: linear-gradient(135deg, #0a0a08 0%, #12100e 30%, #0d0b08 60%, #0a0a08 100%);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            padding: 3.5rem 3rem;
+            margin-bottom: 3rem;
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 20% 50%, rgba(200,168,78,0.06) 0%, transparent 60%),
+                        radial-gradient(ellipse at 85% 20%, rgba(200,168,78,0.04) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .hero-section::after {
+            content: 'MVC';
+            position: absolute; bottom: -30px; right: -20px;
+            font-family: 'Playfair Display', serif;
+            font-size: 10rem; font-weight: 900;
+            color: rgba(200,168,78,0.025);
+            letter-spacing: 0.08em; pointer-events: none;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--tag-bg); border: 1px solid var(--tag-border);
+            color: var(--gold-light); padding: 0.4rem 1.2rem; border-radius: 2rem;
+            font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em;
+            text-transform: uppercase; margin-bottom: 1.5rem; position: relative; z-index: 1;
+        }
+        .hero-section h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem; font-weight: 700;
+            color: var(--text-primary); letter-spacing: -0.01em;
+            margin-bottom: 1rem; position: relative; z-index: 1; line-height: 1.2;
+        }
+        .hero-section h1 .gold { color: var(--gold-light); }
+        .hero-subtitle {
+            font-size: 1.05rem; color: var(--text-secondary);
+            max-width: 700px; position: relative; z-index: 1;
+        }
+        .hero-meta {
+            display: flex; gap: 1.5rem; margin-top: 1.8rem;
+            font-size: 0.8rem; color: var(--text-muted);
+            position: relative; z-index: 1; flex-wrap: wrap;
+        }
+        .hero-meta span { display: inline-flex; align-items: center; gap: 0.4rem; }
+        .hero-meta i { color: var(--gold-dim); }
+        .hero-divider {
+            width: 60px; height: 2px;
+            background: linear-gradient(90deg, var(--gold-light), transparent);
+            margin: 1.5rem 0; position: relative; z-index: 1;
+        }
+
+        /* ─── SECTION ANCHOR ─── */
+        .section-anchor {
+            display: flex; align-items: center; gap: 1rem;
+            margin-bottom: 2rem; margin-top: 0.5rem;
+        }
+        .section-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem; font-weight: 700;
+            color: rgba(200,168,78,0.12); line-height: 1; min-width: 50px;
+        }
+        .section-title-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem; font-weight: 600;
+            color: var(--text-primary); letter-spacing: -0.005em;
+        }
+        .section-line {
+            flex: 1; height: 1px;
+            background: linear-gradient(90deg, var(--border), transparent);
+            min-width: 40px;
+        }
+
+        /* ─── CARD ─── */
+        .card-black {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1.25rem; margin-bottom: 2rem; overflow: hidden;
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+        .card-black:hover {
+            border-color: var(--border-accent);
+            box-shadow: 0 0 40px -15px var(--gold-glow);
+        }
+        .card-header {
+            padding: 1.3rem 2rem; border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary); display: flex; align-items: center; gap: 0.8rem;
+        }
+        .card-header i { color: var(--gold-light); font-size: 1rem; width: 20px; }
+        .card-header h3 {
+            font-size: 1.05rem; font-weight: 600;
+            color: var(--text-primary); letter-spacing: -0.005em;
+        }
+        .card-body { padding: 1.8rem 2rem; }
+        .card-body p { color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.95rem; }
+        .card-body ul { list-style: none; padding-left: 0; }
+        .card-body ul li {
+            padding: 0.45rem 0; color: var(--text-secondary);
+            font-size: 0.9rem; display: flex; align-items: flex-start; gap: 0.6rem;
+        }
+        .card-body ul li i.fa-check-circle { color: var(--success); margin-top: 2px; }
+
+        /* ─── CODE ─── */
+        .code-block {
+            background: var(--code-bg); border: 1px solid var(--code-border);
+            border-radius: 0.75rem; padding: 1.2rem 1.5rem;
+            font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace;
+            font-size: 0.82rem; line-height: 1.6; color: #c9d1d9;
+            overflow-x: auto; margin: 1.2rem 0; position: relative;
+            white-space: pre-wrap; word-break: break-word;
+        }
+        .code-block::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 3px; height: 100%;
+            background: linear-gradient(180deg, var(--gold-light), var(--gold-dark), transparent);
+        }
+        .inline-code {
+            background: var(--code-bg); border: 1px solid var(--code-border);
+            color: var(--gold-light); padding: 0.15rem 0.55rem; border-radius: 6px;
+            font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 0.83rem;
+        }
+
+        /* ─── SCREENSHOT GRID ─── */
+        .screenshot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem; margin: 1.5rem 0;
+        }
+        .screenshot-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 1rem; overflow: hidden;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .screenshot-card:hover { border-color: var(--border-accent); transform: translateY(-2px); }
+        .screenshot-img {
+            background: var(--bg-secondary); text-align: center;
+            padding: 1rem; border-bottom: 1px solid var(--border);
+            position: relative; min-height: 120px;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column;
+        }
+        .screenshot-img img {
+            max-width: 100%; border-radius: 8px;
+            border: 1px solid var(--border); display: block;
+        }
+        .screenshot-img i {
+            font-size: 2rem; color: var(--gold-dim);
+            position: absolute; opacity: 0.4; z-index: 0;
+        }
+        .screenshot-img span {
+            position: relative; z-index: 1;
+            font-size: 0.75rem; color: var(--gold-light);
+            background: var(--tag-bg); padding: 0.2rem 0.8rem;
+            border-radius: 1rem; font-weight: 500; margin-top: 0.5rem;
+        }
+        .screenshot-label {
+            padding: 0.85rem 1rem; font-size: 0.8rem; font-weight: 600;
+            color: var(--text-primary); background: var(--bg-card);
+        }
+        .screenshot-label small {
+            display: block; color: var(--text-muted);
+            font-weight: 400; margin-top: 3px; font-size: 0.72rem;
+        }
+
+        /* ─── STEP ─── */
+        .step-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: var(--tag-bg); border: 1px solid var(--tag-border);
+            color: var(--gold-light); width: 30px; height: 30px;
+            border-radius: 50%; font-size: 0.75rem; font-weight: 700;
+            margin-right: 0.6rem; flex-shrink: 0;
+        }
+
+        /* ─── SUCCESS BOX ─── */
+        .success-box {
+            background: rgba(200,168,78,0.06); border: 1px solid rgba(200,168,78,0.2);
+            border-left: 3px solid var(--gold-light);
+            border-radius: 0 0.75rem 0.75rem 0;
+            padding: 1rem 1.5rem; margin: 1.2rem 0;
+            color: var(--text-primary); font-size: 0.9rem;
+        }
+        .success-box i { color: var(--gold-light); margin-right: 0.5rem; }
+
+        /* ─── TOOLS GRID ─── */
+        .grid-tools {
+            display: flex; flex-wrap: wrap; gap: 0.7rem;
+            margin: 1.2rem 0;
+        }
+        .tool-item {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--tag-bg); border: 1px solid var(--tag-border);
+            color: var(--gold-light); padding: 0.45rem 1rem;
+            border-radius: 2rem; font-size: 0.8rem; font-weight: 500;
+        }
+        .tool-item i { font-size: 0.75rem; }
+
+        /* ─── NOTE ─── */
+        .note-tag {
+            display: inline-block; font-size: 0.73rem;
+            background: rgba(200,168,78,0.08); border: 1px solid rgba(200,168,78,0.2);
+            color: var(--gold-dim); border-radius: 0.5rem;
+            padding: 0.35rem 0.8rem; margin-top: 0.5rem;
+        }
+
+        /* ─── FOOTER ─── */
+        .footer-section {
+            text-align: center; margin-top: 3rem; padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted); font-size: 0.8rem;
+        }
+        .footer-links {
+            display: flex; justify-content: center; gap: 1.2rem;
+            margin-top: 1rem; flex-wrap: wrap;
+        }
+        .footer-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--bg-card); border: 1px solid var(--border);
+            color: var(--gold-light); padding: 0.6rem 1.4rem;
+            border-radius: 2rem; font-size: 0.8rem; font-weight: 500;
+            cursor: pointer; text-decoration: none; transition: all 0.2s;
+        }
+        .footer-btn:hover {
+            border-color: var(--gold-light); background: var(--gold-glow);
+        }
+
+        @media (max-width: 768px) {
+            .container-laprak { padding: 1.2rem 1rem; }
+            .hero-section { padding: 2rem 1.5rem; border-radius: 1rem; }
+            .hero-section::after { font-size: 5rem; bottom: -15px; right: 10px; }
+            .hero-section h1 { font-size: 1.8rem; }
+            .screenshot-grid { grid-template-columns: 1fr; }
+            .card-body { padding: 1.2rem 1.2rem; }
+            .card-header { padding: 1rem 1.2rem; }
+            .section-number { font-size: 2rem; }
+            .section-title-text { font-size: 1.2rem; }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .card-black { animation: fadeUp 0.5s ease-out; }
+    </style>
+</head>
+<body>
+<div class="container-laprak">
+
+    <!-- ═══ HERO ═══ -->
+    <header class="hero-section">
+        <div class="hero-badge"><i class="fas fa-code"></i> PRAKTIKUM 1 — FRAMEWORK LARAVEL</div>
+        <h1>Membangun Aplikasi Web<br>dengan <span class="gold">Routing & MVC</span></h1>
+        <div class="hero-divider"></div>
+        <p class="hero-subtitle">Laporan resmi praktikum — Instalasi, struktur proyek, dan implementasi routing dasar menggunakan Laravel, Composer, dan Artisan Console.</p>
+        <div class="hero-meta">
+            <span><i class="fas fa-calendar-alt"></i> 2026</span>
+            <span><i class="fas fa-code-branch"></i> Laravel 11</span>
+            <span><i class="fas fa-cubes"></i> MVC Architecture</span>
+        </div>
+    </header>
+
+    <!-- ═══ PENDAHULUAN ═══ -->
+    <section>
+        <div class="section-anchor">
+            <span class="section-number">00</span>
+            <h2 class="section-title-text">Pendahuluan & Tujuan</h2>
+            <span class="section-line"></span>
+        </div>
+
+        <div class="card-black">
+            <div class="card-header"><i class="fas fa-feather-alt"></i><h3>Pendahuluan</h3></div>
+            <div class="card-body">
+                <p>Laravel merupakan salah satu framework PHP berbasis <strong>open-source</strong> paling populer saat ini. Dikembangkan oleh Taylor Otwell, framework ini menggunakan arsitektur <span class="inline-code">MVC (Model-View-Controller)</span> yang dirancang untuk meningkatkan produktivitas pengembang melalui sintaks yang ekspresif dan elegan. Praktikum ini bertujuan untuk membekali mahasiswa dengan keterampilan dasar dalam mempersiapkan lingkungan pengembangan hingga menjalankan aplikasi web sederhana menggunakan Laravel.</p>
+            </div>
+        </div>
+
+        <div class="card-black">
+            <div class="card-header"><i class="fas fa-bullseye"></i><h3>Tujuan Praktikum</h3></div>
+            <div class="card-body">
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Memahami prosedur instalasi dan inisialisasi proyek baru menggunakan Laravel.</li>
+                    <li><i class="fas fa-check-circle"></i> Mengenal struktur direktori serta komponen utama dalam ekosistem Laravel.</li>
+                    <li><i class="fas fa-check-circle"></i> Mengimplementasikan konsep routing dasar untuk membangun interaksi sederhana pada aplikasi web.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ LINGKUNGAN ═══ -->
+    <section>
+        <div class="section-anchor">
+            <span class="section-number">01</span>
+            <h2 class="section-title-text">Lingkungan Pengembangan</h2>
+            <span class="section-line"></span>
+        </div>
+        <div class="card-black">
+            <div class="card-header"><i class="fas fa-laptop-code"></i><h3>Tools & Teknologi</h3></div>
+            <div class="card-body">
+                <div class="grid-tools">
+                    <div class="tool-item"><i class="fas fa-server"></i> XAMPP (Apache & MySQL)</div>
+                    <div class="tool-item"><i class="fab fa-php"></i> PHP 8.4.x</div>
+                    <div class="tool-item"><i class="fab fa-node-js"></i> Node.js</div>
+                    <div class="tool-item"><i class="fas fa-boxes"></i> Composer 2.9.x</div>
+                    <div class="tool-item"><i class="fas fa-code"></i> VS Code</div>
+                    <div class="tool-item"><i class="fab fa-git-alt"></i> Git</div>
+                </div>
+                <div class="note-tag"><i class="fas fa-info-circle"></i> Seluruh tools telah terkonfigurasi dan diverifikasi melalui terminal.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ METODOLOGI ═══ -->
+    <section>
+        <div class="section-anchor">
+            <span class="section-number">02</span>
+            <h2 class="section-title-text">Metodologi & Implementasi</h2>
+            <span class="section-line"></span>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="card-black">
+            <div class="card-header"><span class="step-badge">1</span><h3>Persiapan & Verifikasi Sistem</h3></div>
+            <div class="card-body">
+                <p>Memastikan seluruh perangkat lunak pendukung telah terkonfigurasi dengan benar melalui terminal. Perintah yang digunakan meliputi pengecekan versi PHP, Composer, dan Node.js untuk kompatibilitas Laravel versi terbaru.</p>
+                <div class="code-block">php -v && composer -v && node -v</div>
+                <div class="screenshot-grid">
+                    <div class="screenshot-card">
+                        <div class="screenshot-img">
+                            <i class="fas fa-terminal"></i>
+                            <img src="laprak1/image1.png" alt="Verifikasi versi" onerror="this.style.display='none'">
+                        </div>
+                        <div class="screenshot-label">
+                            <strong>image1.png</strong> — Verifikasi versi PHP, Composer, Node.js
+                            <small>Menampilkan output keberhasilan versi di terminal</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="card-black">
+            <div class="card-header"><span class="step-badge">2</span><h3>Inisialisasi Proyek (Scaffolding)</h3></div>
+            <div class="card-body">
+                <p>Pembuatan proyek dengan Composer: <span class="inline-code">composer create-project laravel/laravel pratikum1</span>. Proses otomatis mengunduh dependensi dan membentuk struktur folder Laravel. Selanjutnya konfigurasi aset front-end: <span class="inline-code">npm install && npm run build</span>.</p>
+                <div class="code-block">composer create-project laravel/laravel pratikum1
+cd pratikum1 && npm install && npm run build</div>
+                <div class="screenshot-grid">
+                    <div class="screenshot-card">
+                        <div class="screenshot-img">
+                            <i class="fas fa-download"></i>
+                            <span>Composer output</span>
+                            <img src="laprak1/image2.png" alt="Scaffolding" onerror="this.style.display='none'">
+                        </div>
+                        <div class="screenshot-label"><strong>image2.png</strong> — Proses scaffolding Laravel & download vendor</div>
+                    </div>
+                    <div class="screenshot-card">
+                        <div class="screenshot-img">
+                            <i class="fab fa-npm"></i>
+                            <span>npm build assets</span>
+                            <img src="laprak1/image3.png" alt="npm build" onerror="this.style.display='none'">
+                        </div>
+                        <div class="screenshot-label"><strong>image3.png</strong> — Instalasi dependensi Node & build Vite</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="card-black">
+            <div class="card-header"><span class="step-badge">3</span><h3>Eksekusi Server Lokal (Artisan)</h3></div>
+            <div class="card-body">
+                <p>Aplikasi dijalankan melalui <strong>Artisan Console</strong>. Perintah <span class="inline-code">php artisan serve</span> akan mengalokasikan alamat IP lokal <span class="inline-code">http://127.0.0.1:8000</span> sebagai jalur akses aplikasi melalui peramban web.</p>
+                <div class="code-block">php artisan serve</div>
+                <div class="screenshot-grid">
+                    <div class="screenshot-card">
+                        <div class="screenshot-img"><i class="fas fa-play"></i><span><img src="laprak1/image4.png" alt="serve" onerror="this.style.display='none'"></span></div>
+                        <div class="screenshot-label"><strong>image4.png</strong> — Menjalankan server development Laravel</div>
+                    </div>
+                    <div class="screenshot-card">
+                        <div class="screenshot-img"><i class="fas fa-link"></i><span><img src="laprak1/image5.png" alt="localhost" onerror="this.style.display='none'"></span></div>
+                        <div class="screenshot-label"><strong>image5.png</strong> — Server started on http://127.0.0.1:8000</div>
+                    </div>
+                    <div class="screenshot-card">
+                        <div class="screenshot-img"><i class="fas fa-globe"></i><span>Terminal response <img src="laprak1/image6.png" alt="log" onerror="this.style.display='none'"></span></div>
+                        <div class="screenshot-label"><strong>image6.png</strong> — Log aktivitas server & request handling</div>
+                    </div>
+                    <div class="screenshot-card">
+                        <div class="screenshot-img"><i class="fab fa-chrome"></i><span>Browser view <img src="laprak1/image7.png" alt="welcome" onerror="this.style.display='none'"></span></div>
+                        <div class="screenshot-label"><strong>image7.png</strong> — Halaman welcome Laravel default</div>
+                    </div>
+                </div>
+                <p>Tampilan awal Laravel muncul di browser setelah mengikuti link. Selanjutnya mencoba membuat mekanisme routing.</p>
+            </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="card-black">
+            <div class="card-header"><span class="step-badge">4</span><h3>Implementasi Mekanisme Routing</h3></div>
+            <div class="card-body">
+                <p>Modifikasi berkas <span class="inline-code">routes/web.php</span>. Menambahkan route untuk memetakan URL tertentu ke fungsi kembalian sederhana. Buka proyek di VS Code: <span class="inline-code">code .</span></p>
+                <div class="screenshot-grid">
+                    <div class="screenshot-card">
+                        <div class="screenshot-img"><i class="fas fa-folder-open"></i><span>code . <img src="laprak1/image8.png" alt="vscode" onerror="this.style.display='none'"></span></div>
+                        <div class="screenshot-label"><strong>image8.png</strong> — Buka proyek menggunakan VS Code dari terminal</div>
+                    </div>
+                    <div class="screenshot-card">
+                        <div class="screenshot-img"><i class="fas fa-file-code"></i><span>routes/web.php <img src="laprak1/image9.png" alt="web.php" onerror="this.style.display='none'"></span></div>
+                        <div class="screenshot-label"><strong>image9.png</strong> — Lokasi file routing di struktur direktori Laravel</div>
+                    </div>
+                </div>
+                <p>Kode route yang ditambahkan:</p>
+                <div class="code-block">// routes/web.php
+Route::get('/halo', function () {
+    return 'Halo, ini halaman routing pertama dari Laravel! ✨';
+});
+
+// Alternatif route /helo sesuai praktikum
+Route::get('/helo', fn() => 'Selamat datang di routing Laravel!');</div>
+                <div class="screenshot-grid">
+                    <div class="screenshot-card">
+                        <div class="screenshot-img"><i class="fas fa-code-merge"></i><span>Input kode <img src="laprak1/image10.png" alt="code" onerror="this.style.display='none'"></span></div>
+                        <div class="screenshot-label"><strong>image10.png</strong> — Penambahan route /halo di dalam web.php</div>
+                    </div>
+                    <div class="screenshot-card">
+                        <div class="screenshot-img"><i class="fas fa-eye"></i><span>Hasil browser <img src="laprak1/image11.png" alt="browser" onerror="this.style.display='none'"></span></div>
+                        <div class="screenshot-label"><strong>image11.png</strong> — http://localhost:8000/halo menampilkan teks</div>
+                    </div>
+                </div>
+                <div class="success-box">
+                    <i class="fas fa-check-circle"></i> <strong>Hasil pengujian</strong> — Sistem merespons permintaan pada jalur <span class="inline-code">/halo</span> dan <span class="inline-code">/helo</span> dengan output teks akurat di layar pengguna. Routing dasar berhasil diimplementasikan!
+                </div>
+                <div class="note-tag"><i class="fas fa-lightbulb"></i> Setiap route yang didefinisikan di web.php dapat langsung diakses via browser. Laravel secara otomatis memetakan request ke callback function.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ KESIMPULAN ═══ -->
+    <section>
+        <div class="section-anchor">
+            <span class="section-number">03</span>
+            <h2 class="section-title-text">Kesimpulan</h2>
+            <span class="section-line"></span>
+        </div>
+        <div class="card-black">
+            <div class="card-header"><i class="fas fa-clipboard-check"></i><h3>Ringkasan</h3></div>
+            <div class="card-body">
+                <p>Praktikum ini berhasil membuktikan bahwa Laravel memberikan kemudahan dalam manajemen proyek web melalui fitur-fitur otomatisasinya. Pemahaman mengenai alur kerja <strong>Artisan</strong> dan struktur <strong>routing</strong> merupakan fondasi krusial untuk melangkah ke tahap pengembangan aplikasi yang lebih kompleks, seperti integrasi database menggunakan Eloquent ORM.</p>
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <a href="https://github.com/lybrac/2411532017_pemweb_achmad" class="footer-btn" target="_blank">
+                        <i class="fab fa-github"></i> Repository GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="footer-section">
+        <p><i class="fas fa-image" style="color:var(--gold-dim);"></i> Semua screenshot (image1.png - image11.png) tersedia di folder <span class="inline-code">laprak1/</span>.</p>
+        <p style="margin-top:0.5rem;"><i class="fas fa-code" style="color:var(--gold-light);"></i> Laprak 1 — Laravel Routing & MVC | Framework Pemrograman Web</p>
+        <div class="footer-links">
+            <a href="/" class="footer-btn"><i class="fas fa-home"></i> Beranda</a>
+            <a href="laprak2.html" class="footer-btn">Laprak 2 <i class="fas fa-arrow-right"></i></a>
+            <a href="laprak3.html" class="footer-btn">Laprak 3</a>
+            <a href="laprak4.html" class="footer-btn">Laprak 4</a>
+        </div>
+    </footer>
+</div>
+</body>
+</html>

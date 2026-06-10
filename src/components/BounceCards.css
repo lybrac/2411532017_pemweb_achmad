@@ -1,0 +1,13 @@
+.bounceCardsContainer { position: relative; display: flex; justify-content: center; align-items: center; }
+.card { position: absolute; width: 160px; aspect-ratio: 1; border: 2px solid var(--border); border-radius: 22px; overflow: hidden; box-shadow: var(--shadow-card); cursor: pointer; transition: border-color 0.3s ease, box-shadow 0.3s ease; background: var(--bg-card); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+.card:hover { border-color: var(--accent); box-shadow: var(--shadow-card-hover); z-index: 10; }
+.card-active { border-color: var(--accent) !important; box-shadow: 0 0 0 3px var(--accent-glow), var(--shadow-card-hover) !important; z-index: 10; }
+.card-active-ring { position: absolute; inset: 0; border-radius: 20px; border: 2px solid var(--accent-dim); pointer-events: none; animation: ringPulse 1.8s ease-in-out infinite; }
+@keyframes ringPulse { 0%,100% { opacity:1; } 50% { opacity:0.35; } }
+.card .image { width: 100%; height: 100%; object-fit: cover; }
+
+.bc-card-content { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 16px; background: var(--bg-card); position: relative; overflow: hidden; }
+.bc-card-content::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--accent-dim), transparent); }
+.bc-card-num { font-size: 1.5rem; font-weight: 800; color: var(--accent); letter-spacing: 0.05em; line-height: 1; }
+.bc-card-icon { font-size: 1.8rem; color: var(--accent); opacity: 0.9; }
+.bc-card-label { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-secondary); text-align: center; }
